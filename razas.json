@@ -1,0 +1,35 @@
+[
+    {
+        "nombre": "Mestizo / Callejero",
+        "resumen": "El famoso pichicho, único e irrepetible. Fuerte, leal y de gran corazón.",
+        "descripcion": "Los perros mestizos no tienen un estándar genético fijo, lo que los hace generalmente más resistentes a enfermedades hereditarias. Son excelentes perros de compañía y se adaptan a casi cualquier entorno. En Jacobacci, son los reyes indiscutidos de la manada.",
+        "origen": "Cruce natural (Mundial)",
+        "docilidad": "Muy alta. Son extremadamente agradecidos, inteligentes y adaptables.",
+        "ninos": "Sí, suelen ser excelentes y muy protectores compañeros de familia.",
+        "energia": "Media/Alta. Disfrutan mucho de salir a caminar y olfatear.",
+        "foto_archivo": "mestizo.jpg"
+    },
+    {
+        "nombre": "Ovejero Alemán",
+        "resumen": "Inteligente, guardián y compañero incondicional.",
+        "descripcion": "Una de las razas más inteligentes y versátiles. Ideales para la guardia y la familia. Tienen predisposición a cuidar a su manada de forma natural.",
+        "origen": "Alemania",
+        "docilidad": "Alta (con entrenamiento adecuado). Son muy obedientes y de rápido aprendizaje.",
+        "ninos": "Sí, son muy pacientes y protectores con los chicos de su entorno.",
+        "energia": "Alta. Necesitan mucho espacio y actividad física diaria para no aburrirse.",
+        "foto_archivo": "ovejero.jpg"
+    },
+    {
+        "nombre": "Galgo Barbucho Patagónico",
+        "resumen": "Fuerte, resistente y leal por naturaleza, moldeado por la estepa.",
+        "descripcion": "Raza originaria de la Patagonia, desarrollada durante más de 200 años para la caza en paisajes hostiles. Su característico pelaje áspero y tupido le permite soportar el frío, el viento y los terrenos difíciles. Es un perro que destaca por su velocidad atlética, su tremenda valentía y un nivel de lealtad inquebrantable hacia su familia. En 2015 fue reconocido oficialmente por el Kennel Club Argentino como una raza nacional",
+        "tamano": "Grande",
+        "pelo": "Corto",
+        "origen": "Argentina - Patagonia",
+        "ninos": 4,
+        "energia": 5,
+        "salud": 5,
+        "inteligencia": 4,
+        "foto_archivo": "raza_galgo_barbucho_patagónico.jpeg"
+    }
+]

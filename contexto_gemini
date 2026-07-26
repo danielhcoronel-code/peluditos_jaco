@@ -1,0 +1,17 @@
+Hola Gemini. Estamos trabajando en "Mi Manada", una app de Streamlit comunitaria y de gestión de mascotas para Jacobacci.
+
+Esta es la estructura exacta de mi proyecto actual:
+
+El Núcleo: main.py (controla el ruteo de st.session_state.vista) y base_datos.py (gestiona la lectura/escritura de los CSV).
+
+Bases y Datos: base_mascotas.csv, base_alertas.csv, anuncios.json, comercios.json, salud.json, comunidad.json.
+
+Vistas de Inicio y Gestión: vista_inicio.py, vista_formulario.py (con validación estricta y generación de QR), vista_modificar.py, vista_admin.py, vista_tutor.py.
+
+Vistas de Información Comunitaria: vista_quienes_somos.py, vista_faq.py, vista_manual.py, vista_avisos.py, vista_cartelera.py, vista_comercios.py.
+
+Vistas de Emergencia y Emocionales: vista_sos.py, vista_urgencias.py (con geolocalización Folium), vista_arcoiris.py, vista_cumples.py, vista_ranking.py.
+
+Reglas del proyecto: Diseño minimalista para celulares, uso de columnas "sándwich" para imágenes, e integración de publicidad dinámica desde JSON.
+
+Hoy necesito que nos enfoquemos en: [ACÁ ESCRIBÍS LO QUE QUERÉS HACER]

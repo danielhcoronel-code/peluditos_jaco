@@ -1,0 +1,46 @@
+[
+    {
+        "pregunta": "¿Cuántas veces puedo bañar a mi gato?",
+        "respuesta": "Por regla general, los gatos no necesitan baños regulares ya que su lengua áspera y saliva contienen enzimas diseñadas para su propia higiene. Solo se recomienda bañarlos si están manchados con alguna sustancia tóxica (como aceite de motor o pintura), si tienen un problema dermatológico indicado por un profesional, o si no pueden acicalarse por sí mismos debido a obesidad o edad avanzada."
+    },
+    {
+        "pregunta": "¿Puedo bañar a mi mascota con champú de uso personal (humanos)?",
+        "respuesta": "Absolutamente no. El pH de la piel humana es ácido (entre 5.2 y 5.5), mientras que el de perros y gatos es más neutro (entre 7.0 y 7.5). Usar champú de humanos destruye el manto ácido protector de su piel, dejándolos expuestos a bacterias, parásitos, irritaciones severas y dermatitis."
+    },
+    {
+        "pregunta": "¿Se le puede dar una pastilla de humano para problemas de hígado o dolor?",
+        "respuesta": "Nunca y bajo ninguna circunstancia. El metabolismo hepático y renal de perros y gatos carece de las vías enzimáticas necesarias para procesar medicamentos humanos. Fármacos comunes como el Paracetamol o el Ibuprofeno son altamente tóxicos y pueden causar daño hepático fulminante o úlceras gástricas mortales con una sola dosis."
+    },
+    {
+        "pregunta": "¿Si lo veo comiendo caca lo tengo que retar?",
+        "respuesta": "No. Retarlo o castigarlo suele ser contraproducente. Si el perro come caca por estrés o ansiedad, el reto aumenta ese estrés. Si lo hace para llamar la atención, el reto refuerza la conducta (porque logró que le prestes atención). Lo ideal es limpiar inmediatamente sin que te vea y redirigir su atención hacia un juguete."
+    },
+    {
+        "pregunta": "¿Le hace mal comer caca de otro perro o de gato?",
+        "respuesta": "Sí, representa un alto riesgo sanitario. A través de la materia fecal (coprofagia) se transmiten enfermedades graves como el Parvovirus, y múltiples parásitos intestinales (Giardias, Coccidios, Toxocara). Además, la arena para gatos ingerida puede causar obstrucciones intestinales."
+    },
+    {
+        "pregunta": "¿Comer caca es por falta de alguna proteína?",
+        "respuesta": "Puede serlo, pero no es la única causa. La coprofagia se divide en causas médicas (mala absorción de nutrientes, insuficiencia pancreática exocrina, dietas de muy baja calidad, parasitosis severa) y causas conductuales (aburrimiento, ansiedad, encierro prolongado o imitación a la madre)."
+    },
+    {
+        "pregunta": "¿Puedo darle Paracetamol o Ibuprofeno a mi perro o gato si lo veo con dolor?",
+        "respuesta": "¡NUNCA! Es altamente tóxico. Los perros y gatos carecen de las enzimas hepáticas necesarias para metabolizar estos fármacos humanos. Un solo comprimido puede causar fallo hepático agudo severo o úlceras gástricas perforantes. Ante el dolor, solo administrar analgésicos recetados por un veterinario."
+    },
+    {
+        "pregunta": "¿Si le doy ajo a mi mascota sirve como antiparasitario natural?",
+        "respuesta": "Falso y peligroso. El ajo (al igual que la cebolla) contiene tiosulfato, una sustancia que daña irreparablemente los glóbulos rojos de perros y gatos, causando anemia hemolítica. Los parásitos deben tratarse con medicación de eficacia demostrada (comprimidos o pipetas específicas)."
+    },
+    {
+        "pregunta": "¿Es normal que mi perro tenga la nariz seca y caliente, significa que tiene fiebre?",
+        "respuesta": "La temperatura y humedad de la trufa (nariz) varía a lo largo del día según el ambiente, si acaba de despertar o si estuvo al sol. No es un indicador clínico fiable de fiebre. La única forma técnica y precisa de medir la temperatura es con un termómetro (la temperatura normal es entre 38°C y 39.2°C)."
+    },
+    {
+        "pregunta": "¿Los gatos necesitan tomar leche para estar sanos?",
+        "respuesta": "No. Una vez destetados, la inmensa mayoría de los gatos desarrollan intolerancia a la lactosa porque dejan de producir la enzima 'lactasa'. Darles leche de vaca comercial les provoca fermentación intestinal, cólicos y diarreas agudas."
+    },
+    {
+        "pregunta": "¿Si mi mascota come pasto es porque se está 'purgando' o le duele la panza?",
+        "respuesta": "Es un comportamiento instintivo heredado de sus ancestros y no siempre indica enfermedad; a veces simplemente les gusta la textura o buscan fibra. Sin embargo, si el consumo de pasto es compulsivo y va acompañado de vómitos repetidos, se requiere evaluación médica para descartar gastritis o cuerpos extraños."
+    }
+]

@@ -1,0 +1,14 @@
+[
+    {
+        "emisor": "Patitas Felices",
+        "texto_corto": "Cachorro ovejero ",
+        "texto_largo": "Patitas Felices: Patitas Felices ofrece un lindo cachorro de obejero. Está desparasitado. Tiene solo cuatro meses y está buscando su futura familia. Por favor comunicate con este N para más información. 2944318910",
+        "foto_ruta": "fotos_anuncios/foto_20260713_155131.png"
+    },
+    {
+        "emisor": "Zoonosis / Hospital",
+        "texto_corto": "Próxima desparasitación ",
+        "texto_largo": "Zoonosis del Hospital Rogelio Cortizo comunica que el próximo lunes 20 de julio, se realizaran desparasitaciones de perros y gatos en el centro de salud del barrio matadero",
+        "foto_ruta": ""
+    }
+]
