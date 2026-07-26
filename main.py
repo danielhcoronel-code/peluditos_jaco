@@ -2,12 +2,12 @@ import streamlit as st
 import random
 import os
 import base64
-import streamlit.components.v1 as components # Herramienta para el Efecto Ascensor con Ancla
+import streamlit.components.v1 as components
 
 # ==========================================
 # 1. CONFIGURACIÓN DE LA PÁGINA Y ESTILOS GLOBALES
 # ==========================================
-st.set_page_config(page_title="Peluditos | Ing. Jacobacci", page_icon="🐾", layout="centered")
+st.set_page_config(page_title="Peluditos | Ing. Jacobacci", page_icon="🐾", layout="centered", initial_sidebar_state="collapsed")
 
 def aplicar_estilos_globales():
     st.markdown("""
@@ -19,8 +19,25 @@ def aplicar_estilos_globales():
         .stApp { background-color: #FFF9F2; }
         
         /* Aplicamos la fuente a todos los textos */
-        h1, h2, h3, h4, p, label { font-family: 'Nunito', sans-serif !important; color: #5D4037 !important; }
+        h1, h2, h3, h4, p, label, li, span { 
+            font-family: 'Nunito', sans-serif !important; 
+            color: #5D4037 !important; 
+        }
         
+        /* --- AUMENTO DE TAMAÑO DE FUENTES --- */
+        p, li, label, div[data-testid="stMarkdownContainer"] {
+            font-size: 18px !important;
+            line-height: 1.6 !important;
+        }
+        h1 { font-size: 34px !important; }
+        h2 { font-size: 28px !important; }
+        h3 { font-size: 24px !important; }
+        
+        /* --- OCULTAR PUBLICIDAD Y 3 PUNTITOS (Sólo rincón derecho) --- */
+        div[data-testid="stToolbar"] {
+            visibility: hidden !important; 
+        }
+
         /* --- BOTONES PRINCIPALES (Pantalla Central) --- */
         section[data-testid="stMain"] div.stButton > button:first-child {
             background-color: #FFB347 !important; 
@@ -28,6 +45,7 @@ def aplicar_estilos_globales():
             border-radius: 20px !important; 
             border: none !important; 
             font-weight: 600 !important; 
+            font-size: 18px !important; /* Botón más legible */
             width: 100%;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
@@ -46,7 +64,7 @@ def aplicar_estilos_globales():
             background-color: #FF4757 !important; 
         }
 
-        /* --- BOTONES DEL MENÚ LATERAL (Minimalista y alineado a la izquierda) --- */
+        /* --- BOTONES DEL MENÚ LATERAL --- */
         section[data-testid="stSidebar"] div.stButton > button {
             background-color: transparent !important;
             color: #5D4037 !important;
@@ -62,14 +80,8 @@ def aplicar_estilos_globales():
             background-color: #f2e8dc !important; 
         }
         
-        section[data-testid="stSidebar"] div.stButton > button div[data-testid="stMarkdownContainer"] {
-            width: 100% !important;
-            display: flex !important;
-            justify-content: flex-start !important;
-        }
-
         section[data-testid="stSidebar"] div.stButton > button p {
-            font-size: 16px !important;
+            font-size: 18px !important; /* Menú más legible */
             font-weight: 600 !important;
             text-align: left !important;
             margin: 0 !important;
@@ -125,6 +137,7 @@ from vista_arcoiris import mostrar_arcoiris
 from vista_urgencias import mostrar_emitir_alerta
 from vista_hdt import mostrar_hdt
 from vista_razas import mostrar_razas
+from vista_consultas import mostrar_consultas
 
 # ==========================================
 # 4. MEMORIA Y CONTROL DE IDENTIDAD
@@ -136,14 +149,14 @@ if 'tutor_registrado' not in st.session_state:
     st.session_state.tutor_registrado = False
 
 # ==========================================
-# 4.5 BARRA LATERAL (MENÚ MINIMALISTA)
+# 4.5 BARRA LATERAL (MENÚ ESTÁNDAR OFICIAL)
 # ==========================================
 with st.sidebar:
     st.markdown("""
     <div style="display: flex; align-items: center; margin-bottom: 15px; padding-top: 10px;">
         <div style="font-size: 40px; margin-right: 15px;">🧑‍🌾🐾</div>
         <div>
-            <h4 style="margin: 0; color: #5D4037; font-size: 18px;">Vecino de Jaco</h4>
+            <h4 style="margin: 0; color: #5D4037; font-size: 20px;">Vecino de Jaco</h4>
             <p style="margin: 0; font-size: 14px; color: #888;">Red Peluditos</p>
         </div>
     </div>
@@ -156,6 +169,9 @@ with st.sidebar:
     if st.button("📖 Manual del Usuario", use_container_width=True):
         st.session_state.vista = 'faq'
         st.rerun()
+    if st.button("🩺 Consultorio Médico", use_container_width=True):
+        st.session_state.vista = 'consultas'
+        st.rerun()
     if st.button("🐾 Registrar Mascota", use_container_width=True):
         st.session_state.vista = 'formulario'
         st.rerun()
@@ -165,7 +181,7 @@ with st.sidebar:
     if st.button("🏡 Hogar de Tránsito", use_container_width=True):
         st.session_state.vista = 'hdt'
         st.rerun()
-    if st.button("🗓️ Eventos & Citas", use_container_width=True):
+    if st.button("🗓️ Información del día", use_container_width=True):
         st.session_state.vista = 'avisos'
         st.rerun()
     if st.button("🏪 Comercios Amigos", use_container_width=True):
@@ -197,25 +213,34 @@ with st.sidebar:
     st.markdown(boton_wa, unsafe_allow_html=True)
 
 # ==========================================
-# 5. EL DIRECTOR DE TRÁNSITO (RUTEO) Y ASCENSOR CON ANCLA
+# 5. EL DIRECTOR DE TRÁNSITO (EFECTO ASCENSOR Y VIDEO)
 # ==========================================
 components.html(
     """
     <script>
         setTimeout(function() {
             var doc = window.parent.document;
+            
+            // 1. Efecto ascensor al cargar
+            var contenedores = doc.querySelectorAll('.main, .stApp, section[data-testid="stMain"], main, div[data-testid="stVerticalBlock"]');
+            contenedores.forEach(function(c) {
+                c.scrollTo({top: 0, behavior: 'instant'});
+                c.scrollTop = 0;
+            });
+            window.parent.scrollTo(0, 0);
             var banderita = doc.getElementById('tope-pagina');
-            if (banderita) {
-                banderita.scrollIntoView({behavior: 'instant', block: 'start'});
-            } else {
-                window.parent.scrollTo(0, 0);
-                var contenedores = doc.querySelectorAll('.main, .stApp, section[data-testid="stMain"], main');
-                contenedores.forEach(function(c) {
-                    c.scrollTo({top: 0, behavior: 'instant'});
-                    c.scrollTop = 0;
-                });
-            }
-        }, 150);
+            if (banderita) banderita.scrollIntoView({behavior: 'instant', block: 'start'});
+
+            // 2. Arranque automático de los videos
+            var videos = doc.querySelectorAll('video');
+            videos.forEach(function(vid) {
+                vid.muted = true;
+                var playPromise = vid.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(function(e){});
+                }
+            });
+        }, 250);
     </script>
     """,
     height=0
@@ -223,7 +248,7 @@ components.html(
 
 if st.session_state.vista == 'inicio':
     mostrar_inicio()
-    jugar_sonido_bienvenida()    
+    jugar_sonido_bienvenida()   
 elif st.session_state.vista == 'formulario':
     if not st.session_state.tutor_registrado:
         st.warning("👋 ¡Qué bueno que quieras sumar a tu compañero! Primero necesitamos crear tu perfil de Tutor.")
@@ -260,6 +285,8 @@ elif st.session_state.vista == 'hdt':
     mostrar_hdt()
 elif st.session_state.vista == 'razas':
     mostrar_razas()
+elif st.session_state.vista == 'consultas':
+    mostrar_consultas()
     
 # ==========================================
 # 6. SECCIÓN SOLIDARIA PERMANENTE
