@@ -38,6 +38,30 @@ def aplicar_estilos_globales():
             visibility: hidden !important; 
         }
 
+        /* --- BOTÓN DE MENÚ SÚPER VISIBLE (Para celulares) --- */
+        [data-testid="collapsedControl"] {
+            background-color: #FFB347 !important;
+            border-radius: 10px !important;
+            padding: 5px 15px !important;
+            margin: 10px !important;
+            border: none !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 999999 !important;
+        }
+        [data-testid="collapsedControl"] svg {
+            display: none !important; /* Escondemos la flechita fea */
+        }
+        [data-testid="collapsedControl"]::after {
+            content: "☰ Menú" !important;
+            font-family: 'Nunito', sans-serif !important;
+            font-weight: 800 !important;
+            color: white !important;
+            font-size: 16px !important;
+        }
+
         /* --- BOTONES PRINCIPALES (Pantalla Central) --- */
         section[data-testid="stMain"] div.stButton > button:first-child {
             background-color: #FFB347 !important; 
@@ -45,7 +69,7 @@ def aplicar_estilos_globales():
             border-radius: 20px !important; 
             border: none !important; 
             font-weight: 600 !important; 
-            font-size: 18px !important; /* Botón más legible */
+            font-size: 18px !important; 
             width: 100%;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
@@ -81,7 +105,7 @@ def aplicar_estilos_globales():
         }
         
         section[data-testid="stSidebar"] div.stButton > button p {
-            font-size: 18px !important; /* Menú más legible */
+            font-size: 18px !important; 
             font-weight: 600 !important;
             text-align: left !important;
             margin: 0 !important;
@@ -213,7 +237,7 @@ with st.sidebar:
     st.markdown(boton_wa, unsafe_allow_html=True)
 
 # ==========================================
-# 5. EL DIRECTOR DE TRÁNSITO (EFECTO ASCENSOR Y VIDEO)
+# 5. EL DIRECTOR DE TRÁNSITO (MECÁNICA DE NAVEGACIÓN)
 # ==========================================
 components.html(
     """
@@ -238,6 +262,18 @@ components.html(
                 var playPromise = vid.play();
                 if (playPromise !== undefined) {
                     playPromise.catch(function(e){});
+                }
+            });
+
+            // 3. Resorte automático: Cerrar el menú al hacer clic en un botón (Fundamental para celulares)
+            window.parent.document.addEventListener('click', function(e) {
+                var target = e.target.closest('section[data-testid="stSidebar"] button');
+                if(target) {
+                    var closeBtn = doc.querySelector('button[aria-label="Close sidebar"]');
+                    if(!closeBtn) closeBtn = doc.querySelector('button[data-testid="stSidebarCollapseButton"]');
+                    if (closeBtn) {
+                        setTimeout(function() { closeBtn.click(); }, 150);
+                    }
                 }
             });
         }, 250);
