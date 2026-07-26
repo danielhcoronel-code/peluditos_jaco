@@ -183,7 +183,7 @@ with st.sidebar:
     st.markdown("<h3 style='text-align: center; color: #8B4513;'>📢 ¡Hagamos ruido!</h3>", unsafe_allow_html=True)
     st.write("Ayudanos a tejer esta red vecinal. Mientras más seamos, más peluditos salvamos.")
     
-    texto_viral = "¡Hola! Descubrí una app espectacular para los que amamos a nuestras mascotas. Tiene todo lo que necesitás y, además, nos hace parte de una red de contención vecinal que hace mucha falta. Sumate desde este link: https://tu-link-de-la-app.com"
+    texto_viral = "¡Hola! Descubrí una app espectacular para los que amamos a nuestras mascotas. Tiene todo lo que necesitás y, además, nos hace parte de una red de contención vecinal que hace mucha falta. Sumate desde este link: https://peluditosjaco.streamlit.app"
     texto_formateado = texto_viral.replace(" ", "%20")
     link_whatsapp = f"https://api.whatsapp.com/send?text={texto_formateado}"
     
