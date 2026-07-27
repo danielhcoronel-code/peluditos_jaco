@@ -33,18 +33,6 @@ def aplicar_estilos_globales():
         h2 { font-size: 28px !important; }
         h3 { font-size: 24px !important; }
         
-        /* --- OCULTAR TEXTO ROTO DE ÍCONOS (keyboard_double_) --- */
-        [data-testid="stSidebarCollapseButton"] span,
-        [data-testid="collapsedControl"] span {
-            font-size: 0px !important; /* Esconde el texto en inglés del ícono roto */
-        }
-        
-        /* --- OCULTAR SÓLO EL BOTÓN DE DEPLOY Y MENÚ DERECHO --- */
-        .stAppDeployButton,
-        [data-testid="stToolbar"] {
-            display: none !important; 
-        }
-
         /* --- BOTONES PRINCIPALES (Pantalla Central) --- */
         section[data-testid="stMain"] div.stButton > button:first-child {
             background-color: #FFB347 !important; 
