@@ -1,0 +1,5 @@
+git add .
+
+git commit -m "Solucion texto roto en cabecera"
+
+git push
