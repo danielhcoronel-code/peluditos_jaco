@@ -33,33 +33,10 @@ def aplicar_estilos_globales():
         h2 { font-size: 28px !important; }
         h3 { font-size: 24px !important; }
         
-        /* --- OCULTAR PUBLICIDAD Y 3 PUNTITOS (Sólo rincón derecho) --- */
-        div[data-testid="stToolbar"] {
-            visibility: hidden !important; 
-        }
-
-        /* --- BOTÓN DE MENÚ SÚPER VISIBLE (Para celulares) --- */
-        [data-testid="collapsedControl"] {
-            background-color: #FFB347 !important;
-            border-radius: 10px !important;
-            padding: 5px 15px !important;
-            margin: 10px !important;
-            border: none !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            z-index: 999999 !important;
-        }
-        [data-testid="collapsedControl"] svg {
-            display: none !important; /* Escondemos la flechita fea */
-        }
-        [data-testid="collapsedControl"]::after {
-            content: "☰ Menú" !important;
-            font-family: 'Nunito', sans-serif !important;
-            font-weight: 800 !important;
-            color: white !important;
-            font-size: 16px !important;
+        /* --- OCULTAR SÓLO EL BOTÓN DE DEPLOY --- */
+        /* Dejamos la cabecera quieta para no romper el celular */
+        .stAppDeployButton {
+            display: none !important; 
         }
 
         /* --- BOTONES PRINCIPALES (Pantalla Central) --- */
@@ -265,12 +242,11 @@ components.html(
                 }
             });
 
-            // 3. Resorte automático: Cerrar el menú al hacer clic en un botón (Fundamental para celulares)
+            // 3. Resorte automático: Cerrar el menú al hacer clic
             window.parent.document.addEventListener('click', function(e) {
                 var target = e.target.closest('section[data-testid="stSidebar"] button');
                 if(target) {
-                    var closeBtn = doc.querySelector('button[aria-label="Close sidebar"]');
-                    if(!closeBtn) closeBtn = doc.querySelector('button[data-testid="stSidebarCollapseButton"]');
+                    var closeBtn = doc.querySelector('button[aria-label="Close sidebar"]') || doc.querySelector('button[data-testid="stSidebarCollapseButton"]');
                     if (closeBtn) {
                         setTimeout(function() { closeBtn.click(); }, 150);
                     }
