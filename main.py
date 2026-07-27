@@ -33,54 +33,44 @@ def aplicar_estilos_globales():
         h2 { font-size: 28px !important; }
         h3 { font-size: 24px !important; }
         
-        /* --- BOTONES PRINCIPALES (Pantalla Central) --- */
-        section[data-testid="stMain"] div.stButton > button:first-child {
-            background-color: #FFB347 !important; 
-            color: white !important; 
-            border-radius: 20px !important; 
-            border: none !important; 
-            font-weight: 600 !important; 
-            font-size: 18px !important; 
-            width: 100%;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
+        /* 💣 DEMOLICIÓN TOTAL DEL MENÚ NATIVO 💣 */
+        header[data-testid="stHeader"] { display: none !important; height: 0px !important; }
+        [data-testid="collapsedControl"] { display: none !important; }
+        [data-testid="stSidebar"] { display: none !important; }
+        .stAppDeployButton { display: none !important; }
+        [data-testid="stToolbar"] { display: none !important; }
+        footer { display: none !important; }
+
+        /* Ajuste de margen para que la pantalla empiece bien arriba */
+        .block-container {
+            padding-top: 1.5rem !important;
         }
-        section[data-testid="stMain"] div.stButton > button:first-child:hover { 
-            background-color: #FF9800 !important; 
-            transform: translateY(-2px); 
+
+        /* --- BOTONES PRINCIPALES GLOBALES --- */
+        .stButton > button {
+            border-radius: 12px !important;
+            font-weight: 800 !important;
+            font-size: 18px !important;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(0,0,0,0.05) !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+            background-color: transparent !important;
+            color: #5D4037 !important;
+            justify-content: flex-start !important;
+        }
+        .stButton > button:hover {
+            transform: translateY(-2px);
+            background-color: #f2e8dc !important;
         }
         
         /* Botones de Urgencia en principal (S.O.S) */
-        section[data-testid="stMain"] div.stButton > button[kind="primary"] { 
+        .stButton > button[kind="primary"] { 
             background-color: #FF6B6B !important; 
             color: white !important;
+            justify-content: center !important;
         }
-        section[data-testid="stMain"] div.stButton > button[kind="primary"]:hover { 
+        .stButton > button[kind="primary"]:hover { 
             background-color: #FF4757 !important; 
-        }
-
-        /* --- BOTONES DEL MENÚ LATERAL --- */
-        section[data-testid="stSidebar"] div.stButton > button {
-            background-color: transparent !important;
-            color: #5D4037 !important;
-            border-radius: 10px !important;
-            box-shadow: none !important;
-            padding: 8px 15px !important;
-            border: none !important;
-            display: flex !important;
-            justify-content: flex-start !important;
-        }
-        
-        section[data-testid="stSidebar"] div.stButton > button:hover {
-            background-color: #f2e8dc !important; 
-        }
-        
-        section[data-testid="stSidebar"] div.stButton > button p {
-            font-size: 18px !important; 
-            font-weight: 600 !important;
-            text-align: left !important;
-            margin: 0 !important;
-            width: 100% !important;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -135,62 +125,96 @@ from vista_razas import mostrar_razas
 from vista_consultas import mostrar_consultas
 
 # ==========================================
-# 4. MEMORIA Y CONTROL DE IDENTIDAD
+# 4. MEMORIA, CONTROL DE IDENTIDAD Y NAVEGACIÓN
 # ==========================================
 if 'vista' not in st.session_state:
     st.session_state.vista = 'inicio'
-
+if 'vista_anterior' not in st.session_state:
+    st.session_state.vista_anterior = 'inicio'
 if 'tutor_registrado' not in st.session_state:
     st.session_state.tutor_registrado = False
 
+def navegar_a(nueva_vista):
+    st.session_state.vista_anterior = st.session_state.vista
+    st.session_state.vista = nueva_vista
+    st.rerun()
+
 # ==========================================
-# 4.5 BARRA LATERAL (MENÚ ESTÁNDAR OFICIAL)
+# 4.5 EL MENÚ PRINCIPAL COMPLETO Y ORDENADO
 # ==========================================
-with st.sidebar:
+def mostrar_menu_principal():
     st.markdown("""
-    <div style="display: flex; align-items: center; margin-bottom: 15px; padding-top: 10px;">
-        <div style="font-size: 40px; margin-right: 15px;">🧑‍🌾🐾</div>
+    <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+        <div style="font-size: 50px; margin-right: 15px;">🧑‍🌾🐾</div>
         <div>
-            <h4 style="margin: 0; color: #5D4037; font-size: 20px;">Vecino de Jaco</h4>
-            <p style="margin: 0; font-size: 14px; color: #888;">Red Peluditos</p>
+            <h2 style="margin: 0; color: #5D4037;">Menú Principal</h2>
+            <p style="margin: 0; font-size: 16px; color: #888;">Red Peluditos Jacobacci</p>
         </div>
     </div>
-    <hr style="margin-top: 0px; margin-bottom: 15px;">
+    <hr style="margin-top: 0px; margin-bottom: 20px;">
     """, unsafe_allow_html=True)
     
-    if st.button("🏠 Inicio", use_container_width=True):
-        st.session_state.vista = 'inicio'
-        st.rerun()
-    if st.button("📖 Manual del Usuario", use_container_width=True):
-        st.session_state.vista = 'faq'
-        st.rerun()
-    if st.button("🩺 Consultorio Médico", use_container_width=True):
-        st.session_state.vista = 'consultas'
-        st.rerun()
-    if st.button("🐾 Registrar Mascota", use_container_width=True):
-        st.session_state.vista = 'formulario'
-        st.rerun()
-    if st.button("🆘 S.O.S Alertas", use_container_width=True):
-        st.session_state.vista = 'urgencias'
-        st.rerun()
-    if st.button("🏡 Hogar de Tránsito", use_container_width=True):
-        st.session_state.vista = 'hdt'
-        st.rerun()
-    if st.button("🗓️ Información del día", use_container_width=True):
-        st.session_state.vista = 'avisos'
-        st.rerun()
-    if st.button("🏪 Comercios Amigos", use_container_width=True):
-        st.session_state.vista = 'comercios'
-        st.rerun()
-    if st.button("✏️ Modificar Ficha", use_container_width=True):
-        st.session_state.vista = 'modificar'
-        st.rerun()
-    if st.button("⚙️ Configuración", use_container_width=True):
-        st.session_state.vista = 'admin'
-        st.rerun()
+    # --- GRUPO 1: GENERALES ---
+    st.markdown("<h4 style='color: #8B4513; margin-bottom: 10px;'>📌 Accesos Generales</h4>", unsafe_allow_html=True)
+    if st.button("🏠 Portada de Inicio", use_container_width=True): navegar_a('inicio')
+    colG1, colG2 = st.columns(2)
+    with colG1:
+        if st.button("👥 Quiénes Somos", use_container_width=True): navegar_a('quienes_somos')
+    with colG2:
+        if st.button("📖 Manual de Uso", use_container_width=True): navegar_a('faq')
+
+    # --- GRUPO 2: GESTIÓN DE FICHAS ---
+    st.markdown("<br><h4 style='color: #8B4513; margin-bottom: 10px;'>📝 Fichas y Registros</h4>", unsafe_allow_html=True)
+    colM1, colM2 = st.columns(2)
+    with colM1:
+        if st.button("🐾 Registro", use_container_width=True): navegar_a('formulario')
+    with colM2:
+        if st.button("✏️ Editar Registro", use_container_width=True): navegar_a('modificar')
+        
+    if st.button("🐕 Catálogo de Razas", use_container_width=True): navegar_a('razas')
+
+    # --- GRUPO 3: COMUNICADOS ---
+    st.markdown("<br><h4 style='color: #8B4513; margin-bottom: 10px;'>📢 Comunicados</h4>", unsafe_allow_html=True)
+    if st.button("🗓️ Información del día", use_container_width=True): navegar_a('avisos')
+
+    # --- GRUPO 3.5: CONSULTORIO MÉDICO (Con foto de los doctores) ---
+    st.markdown("<br>", unsafe_allow_html=True)
+    with st.container(border=True):
+        st.markdown("<h4 style='text-align: center; color: #8B4513;'>🩺 Consultorio Médico</h4>", unsafe_allow_html=True)
+        if os.path.exists("doctores.png"):
+            st.image("doctores.png", use_container_width=True)
+        elif os.path.exists("doctores-2.png"):
+            st.image("doctores-2.png", use_container_width=True)
+        st.markdown("<p style='text-align: center; font-size: 16px; color: #5D4037;'>Dres. Roco y Aquí-tá a tu disposición para cuidar la salud de la manada.</p>", unsafe_allow_html=True)
+        if st.button("Entrar al Consultorio Médico", key="btn_consultorio_menu", use_container_width=True):
+            navegar_a('consultas')
+
+    # --- GRUPO 4: COMUNIDAD ---
+    st.markdown("<br><h4 style='color: #8B4513; margin-bottom: 10px;'>🏘️ Comunidad</h4>", unsafe_allow_html=True)
+    colC1, colC2 = st.columns(2)
+    with colC1:
+        if st.button("🎂 Cumples", use_container_width=True): navegar_a('cumples')
+        if st.button("🏡 Ser Hogar (H.D.T.)", use_container_width=True): navegar_a('hdt')
+    with colC2:
+        if st.button("🌈 Arco Iris", use_container_width=True): navegar_a('arcoiris')
+        if st.button("🏪 Comercios", use_container_width=True): navegar_a('comercios')
+
+    if st.button("📍 Acceso Admin", use_container_width=True): navegar_a('admin')
+
+    # --- GRUPO 5: URGENCIAS Y URESA ---
+    st.markdown("<br><h4 style='color: #8B4513; margin-bottom: 10px;'>🚨 Urgencias y Alertas</h4>", unsafe_allow_html=True)
+    colU1, colU2 = st.columns(2)
+    with colU1:
+        if st.button("S.O.S. Extraviado", use_container_width=True): navegar_a('sos')
+    with colU2:
+        if st.button("S.O.S. Peligro", type="primary", use_container_width=True): navegar_a('urgencias')
         
     st.markdown("<br>", unsafe_allow_html=True)
+    st.link_button("🚨 Reportar Mordedura a U.R.E.S.A. (Oficial)", "https://docs.google.com/forms/d/e/1FAIpQLScH8t9_aR3JHMVN5HmJTKzr0ut1g7-LdGMVDDvhE9LJbmIfLg/viewform?usp=sharing&ouid=118263163555837582044", use_container_width=True)
+
+    st.markdown("---")
     
+    # --- REDES Y COMPARTIR ---
     st.markdown("<h3 style='text-align: center; color: #8B4513;'>📢 ¡Hagamos ruido!</h3>", unsafe_allow_html=True)
     st.write("Ayudanos a tejer esta red vecinal. Mientras más seamos, más peluditos salvamos.")
     
@@ -206,6 +230,13 @@ with st.sidebar:
     </a>
     """
     st.markdown(boton_wa, unsafe_allow_html=True)
+    
+    # LINK DE FACEBOOK REAL
+    st.link_button("📘 Visitanos en Facebook (Peluditos en Red)", "https://www.facebook.com/profile.php?id=61592449882525", use_container_width=True)
+
+    st.markdown("---")
+    if st.button("⬅️ Volver a donde estaba", use_container_width=True):
+        navegar_a(st.session_state.vista_anterior)
 
 # ==========================================
 # 5. EL DIRECTOR DE TRÁNSITO (MECÁNICA DE NAVEGACIÓN)
@@ -216,7 +247,6 @@ components.html(
         setTimeout(function() {
             var doc = window.parent.document;
             
-            // 1. Efecto ascensor al cargar
             var contenedores = doc.querySelectorAll('.main, .stApp, section[data-testid="stMain"], main, div[data-testid="stVerticalBlock"]');
             contenedores.forEach(function(c) {
                 c.scrollTo({top: 0, behavior: 'instant'});
@@ -226,7 +256,6 @@ components.html(
             var banderita = doc.getElementById('tope-pagina');
             if (banderita) banderita.scrollIntoView({behavior: 'instant', block: 'start'});
 
-            // 2. Arranque automático de los videos
             var videos = doc.querySelectorAll('video');
             videos.forEach(function(vid) {
                 vid.muted = true;
@@ -235,24 +264,16 @@ components.html(
                     playPromise.catch(function(e){});
                 }
             });
-
-            // 3. Resorte automático: Cerrar el menú al hacer clic
-            window.parent.document.addEventListener('click', function(e) {
-                var target = e.target.closest('section[data-testid="stSidebar"] button');
-                if(target) {
-                    var closeBtn = doc.querySelector('button[aria-label="Close sidebar"]') || doc.querySelector('button[data-testid="stSidebarCollapseButton"]');
-                    if (closeBtn) {
-                        setTimeout(function() { closeBtn.click(); }, 150);
-                    }
-                }
-            });
         }, 250);
     </script>
     """,
     height=0
 )
 
-if st.session_state.vista == 'inicio':
+# === RUTEO PRINCIPAL ===
+if st.session_state.vista == 'menu':
+    mostrar_menu_principal()
+elif st.session_state.vista == 'inicio':
     mostrar_inicio()
     jugar_sonido_bienvenida()   
 elif st.session_state.vista == 'formulario':
@@ -297,7 +318,8 @@ elif st.session_state.vista == 'consultas':
 # ==========================================
 # 6. SECCIÓN SOLIDARIA PERMANENTE
 # ==========================================
-st.markdown("---")
-st.info("🐾 **Solidaridad en Jaco:** Con tu aporte voluntario colaborás directamente con Patitas Felices y ayudás a mantener esta plataforma gratuita para los vecinos.")
-if st.button("💛 Convertirme en Padrino", use_container_width=True, key="btn_solidario"):
-    st.success("¡Gracias de corazón! Próximamente habilitaremos el link seguro de Mercado Pago.")
+if st.session_state.vista != 'menu':
+    st.markdown("---")
+    st.info("🐾 **Solidaridad en Jaco:** Con tu aporte voluntario colaborás directamente con Patitas Felices y ayudás a mantener esta plataforma gratuita para los vecinos.")
+    if st.button("💛 Convertirme en Padrino", use_container_width=True, key="btn_solidario"):
+        st.success("¡Gracias de corazón! Próximamente habilitaremos el link seguro de Mercado Pago.")

@@ -9,6 +9,20 @@ def mostrar_modificar():
     # --- LA BANDERITA DE DESTINO PARA EL ASCENSOR ---
     st.markdown("<div id='tope-pagina'></div>", unsafe_allow_html=True)
     
+    # === BOTONERA DE NAVEGACIÓN (SUPERIOR) ===
+    col_nav1, col_nav2 = st.columns(2)
+    with col_nav1:
+        if st.button("⬅️ Volver", key="btn_volver_arriba_modificar", use_container_width=True):
+            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
+            st.rerun()
+    with col_nav2:
+        if st.button("☰ Menú Principal", key="btn_menu_arriba_modificar", use_container_width=True):
+            st.session_state.vista_anterior = st.session_state.vista
+            st.session_state.vista = 'menu'
+            st.rerun()
+    st.markdown("---")
+    # =========================================
+    
     st.markdown("<h2 style='text-align: center;'>✏️ Modificar Ficha</h2>", unsafe_allow_html=True)
     st.write("Ingresá el número de tu mascota para recuperar sus datos, hacer correcciones o **recuperar tu código QR**.")
     
@@ -94,7 +108,7 @@ def mostrar_modificar():
                 elif especie_ed == "Gato": check_multiple_ed = st.checkbox("Triple Felina", value=("Triple" in estado_actual))
                 else: check_multiple_ed = False
                 
-            condicion_ed = st.text_area("Condición Médica", value=m_edit.get('Condicion_Medica', ''))
+                condicion_ed = st.text_area("Condición Médica", value=m_edit.get('Condicion_Medica', ''))
 
             st.markdown("---")
             st.markdown("### 📞 Contacto de Emergencia")
@@ -127,3 +141,17 @@ def mostrar_modificar():
                     'Estado_Vida': m_edit.get('Estado_Vida', 'Vivo')
                 })
                 st.success("¡Ficha actualizada con éxito! Ya podés volver al inicio.")
+
+    # === BOTONERA DE NAVEGACIÓN (INFERIOR) ===
+    st.markdown("---")
+    col_nav3, col_nav4 = st.columns(2)
+    with col_nav3:
+        if st.button("⬅️ Volver", key="btn_volver_abajo_modificar", use_container_width=True):
+            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
+            st.rerun()
+    with col_nav4:
+        if st.button("☰ Menú Principal", key="btn_menu_abajo_modificar", use_container_width=True):
+            st.session_state.vista_anterior = st.session_state.vista
+            st.session_state.vista = 'menu'
+            st.rerun()
+    # =========================================

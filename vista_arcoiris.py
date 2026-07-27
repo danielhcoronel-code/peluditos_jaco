@@ -38,6 +38,20 @@ def mostrar_arcoiris():
     # --- LA BANDERITA DE DESTINO PARA EL ASCENSOR ---
     st.markdown("<div id='tope-pagina'></div>", unsafe_allow_html=True)
     
+    # === BOTONERA DE NAVEGACIÓN (SUPERIOR) ===
+    col_nav1, col_nav2 = st.columns(2)
+    with col_nav1:
+        if st.button("⬅️ Volver", key="btn_volver_arriba_arcoiris", use_container_width=True):
+            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
+            st.rerun()
+    with col_nav2:
+        if st.button("☰ Menú Principal", key="btn_menu_arriba_arcoiris", use_container_width=True):
+            st.session_state.vista_anterior = st.session_state.vista
+            st.session_state.vista = 'menu'
+            st.rerun()
+    st.markdown("---")
+    # =========================================
+    
     st.markdown("<h2 style='text-align: center; color: #9C27B0;'>🌈 Puente Arco Iris</h2>", unsafe_allow_html=True)
     st.write("Un espacio para recordar con amor a nuestros compañeros que ya cruzaron el puente. Dejales un mensaje y un símbolo de cariño.")
     
@@ -46,37 +60,50 @@ def mostrar_arcoiris():
     
     if not fallecidos:
         st.info("Aún no hay mascotas en el Puente Arco Iris.")
-        return
+    else:
+        for m in fallecidos:
+            id_m = m['ID_Mascota']
+            with st.container(border=True):
+                col_i, col_d = st.columns([1, 3])
+                with col_i:
+                    ruta = os.path.join(CARPETA_FOTOS, f"{id_m}.jpg")
+                    if os.path.exists(ruta): st.image(ruta)
+                with col_d:
+                    st.subheader(f"✨ {m['Nombre_Mascota']}")
+                    st.write(f"**Raza:** {m['Raza']} | **Especie:** {m['Especie']}")
+                    
+                    tributos_previos = obtener_tributos(id_m)
+                    if tributos_previos:
+                        st.markdown("**Mensajes de la comunidad:**")
+                        for t in tributos_previos:
+                            st.caption(f"{t['Emoji']} *\"{t['Mensaje']}\"* - **{t['Autor']}** ({t['Fecha']})")
+                    
+                    with st.expander(f"🕊️ Dejar un mensaje para {m['Nombre_Mascota']}"):
+                        with st.form(f"form_tributo_{id_m}"):
+                            autor = st.text_input("Tu nombre:", key=f"autor_{id_m}")
+                            mensaje = st.text_area("Tu mensaje:", max_chars=200, key=f"msg_{id_m}")
+                            emoji = st.radio("Elegí un símbolo:", ["🌈", "🕊️", "💔", "🕯️", "🐾", "⭐"], horizontal=True, key=f"emo_{id_m}")
+                            
+                            if st.form_submit_button("Enviar Homenaje"):
+                                if not autor or not mensaje:
+                                    st.warning("Completá tu nombre y el mensaje.")
+                                elif not validar_texto(mensaje) or not validar_texto(autor):
+                                    st.error("⚠️ Tu mensaje contiene palabras no permitidas. Por favor, modificalo.")
+                                else:
+                                    guardar_tributo(id_m, autor, mensaje, emoji)
+                                    st.success("¡Mensaje publicado!")
+                                    st.rerun()
 
-    for m in fallecidos:
-        id_m = m['ID_Mascota']
-        with st.container(border=True):
-            col_i, col_d = st.columns([1, 3])
-            with col_i:
-                ruta = os.path.join(CARPETA_FOTOS, f"{id_m}.jpg")
-                if os.path.exists(ruta): st.image(ruta)
-            with col_d:
-                st.subheader(f"✨ {m['Nombre_Mascota']}")
-                st.write(f"**Raza:** {m['Raza']} | **Especie:** {m['Especie']}")
-                
-                tributos_previos = obtener_tributos(id_m)
-                if tributos_previos:
-                    st.markdown("**Mensajes de la comunidad:**")
-                    for t in tributos_previos:
-                        st.caption(f"{t['Emoji']} *\"{t['Mensaje']}\"* - **{t['Autor']}** ({t['Fecha']})")
-                
-                with st.expander(f"🕊️ Dejar un mensaje para {m['Nombre_Mascota']}"):
-                    with st.form(f"form_tributo_{id_m}"):
-                        autor = st.text_input("Tu nombre:", key=f"autor_{id_m}")
-                        mensaje = st.text_area("Tu mensaje:", max_chars=200, key=f"msg_{id_m}")
-                        emoji = st.radio("Elegí un símbolo:", ["🌈", "🕊️", "💔", "🕯️", "🐾", "⭐"], horizontal=True, key=f"emo_{id_m}")
-                        
-                        if st.form_submit_button("Enviar Homenaje"):
-                            if not autor or not mensaje:
-                                st.warning("Completá tu nombre y el mensaje.")
-                            elif not validar_texto(mensaje) or not validar_texto(autor):
-                                st.error("⚠️ Tu mensaje contiene palabras no permitidas. Por favor, modificalo.")
-                            else:
-                                guardar_tributo(id_m, autor, mensaje, emoji)
-                                st.success("¡Mensaje publicado!")
-                                st.rerun()
+    # === BOTONERA DE NAVEGACIÓN (INFERIOR) ===
+    st.markdown("---")
+    col_nav3, col_nav4 = st.columns(2)
+    with col_nav3:
+        if st.button("⬅️ Volver", key="btn_volver_abajo_arcoiris", use_container_width=True):
+            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
+            st.rerun()
+    with col_nav4:
+        if st.button("☰ Menú Principal", key="btn_menu_abajo_arcoiris", use_container_width=True):
+            st.session_state.vista_anterior = st.session_state.vista
+            st.session_state.vista = 'menu'
+            st.rerun()
+    # =========================================

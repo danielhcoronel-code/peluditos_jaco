@@ -2,8 +2,6 @@ import streamlit as st
 import os
 from PIL import Image
 
-def ir_a_inicio(): st.session_state.vista = 'inicio'
-
 # Función auxiliar para cargar imágenes de forma segura
 def cargar_imagen(ruta):
     if os.path.exists(ruta):
@@ -13,6 +11,20 @@ def cargar_imagen(ruta):
 def mostrar_manual():
     # --- LA BANDERITA DE DESTINO PARA EL ASCENSOR ---
     st.markdown("<div id='tope-pagina'></div>", unsafe_allow_html=True)
+    
+    # === BOTONERA DE NAVEGACIÓN (SUPERIOR) ===
+    col_nav1, col_nav2 = st.columns(2)
+    with col_nav1:
+        if st.button("⬅️ Volver", key="btn_volver_arriba_manual", use_container_width=True):
+            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
+            st.rerun()
+    with col_nav2:
+        if st.button("☰ Menú Principal", key="btn_menu_arriba_manual", use_container_width=True):
+            st.session_state.vista_anterior = st.session_state.vista
+            st.session_state.vista = 'menu'
+            st.rerun()
+    st.markdown("---")
+    # =========================================
     
     # Estilos CSS para el manual (Formal y legible con toques de color)
     st.markdown("""
@@ -29,9 +41,6 @@ def mostrar_manual():
 
     st.markdown("<h1 class='manual-header'>📖 Guía de Usabilidad y Objetivos</h1>", unsafe_allow_html=True)
     st.markdown("<h4 style='text-align: center; color: #795548;'>Red Mascotera de Ingeniero Jacobacci</h4>", unsafe_allow_html=True)
-    
-    st.button("⬅️ Volver al Inicio", on_click=ir_a_inicio, use_container_width=True)
-    st.markdown("---")
 
     # ==========================================
     # SECCIÓN 1: OBJETIVOS DEL SOFTWARE (PISADO ANTERIOR)
@@ -46,7 +55,7 @@ def mostrar_manual():
     # ESPACIO PARA LA IMAGEN 2: Objetivos
     img2 = cargar_imagen("manual_img2.png")
     if img2:
-        st.image(img2, caption="Imagen 2: El impacto real de los objetivos comunales", use_column_width=True)
+        st.image(img2, caption="Imagen 2: El impacto real de los objetivos comunales", use_container_width=True)
 
     st.markdown("---")
 
@@ -76,7 +85,7 @@ def mostrar_manual():
     # ESPACIO PARA LA IMAGEN 3: Registro (Mascota image_5.png)
     img3 = cargar_imagen("manual_img3.png") # Asegurate de guardar image_5.png con este nombre
     if img3:
-        st.image(img3, caption="Imagen 3: Usando la cámara para el registro", use_column_width=True)
+        st.image(img3, caption="Imagen 3: Usando la cámara para el registro", use_container_width=True)
     else:
         st.info("🖼️ (Aquí cargaremos la Imagen 3: Ilustrando el uso de la cámara para el registro, Mascota `image_5.png`)")
 
@@ -87,9 +96,17 @@ def mostrar_manual():
 
     st.markdown("<div class='manual-tip'>💡 <b>TIP DE USABILIDAD:</b> Si tu mascota es difícil de fotografiar porque no se queda quieta, te recomendamos que primero le saques una buena foto con la aplicación de la cámara normal de tu celular y luego, al momento de registrarla, elijas la opción de <b>'Subir foto existente'</b>.</div>", unsafe_allow_html=True)
 
+
+    # === BOTONERA DE NAVEGACIÓN (INFERIOR) ===
     st.markdown("---")
-
-    # [Aquí seguirá el Capítulo 3: SOS, Cartelera, Salud, etc...]
-
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    st.button("⬅️ Volver", on_click=ir_a_inicio, use_container_width=True, key="btn_volver_manual_abajo")
+    col_nav3, col_nav4 = st.columns(2)
+    with col_nav3:
+        if st.button("⬅️ Volver", key="btn_volver_abajo_manual", use_container_width=True):
+            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
+            st.rerun()
+    with col_nav4:
+        if st.button("☰ Menú Principal", key="btn_menu_abajo_manual", use_container_width=True):
+            st.session_state.vista_anterior = st.session_state.vista
+            st.session_state.vista = 'menu'
+            st.rerun()
+    # =========================================

@@ -8,6 +8,22 @@ def mostrar_emitir_alerta():
     # --- LA BANDERITA DE DESTINO PARA EL ASCENSOR ---
     st.markdown("<div id='tope-pagina'></div>", unsafe_allow_html=True)
     
+    # === BOTONERA DE NAVEGACIÓN (SUPERIOR) ===
+    col_nav1, col_nav2 = st.columns(2)
+    with col_nav1:
+        if st.button("⬅️ Volver", key="btn_volver_arriba_urgencias", use_container_width=True):
+            st.session_state.alerta_generada = False
+            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
+            st.rerun()
+    with col_nav2:
+        if st.button("☰ Menú Principal", key="btn_menu_arriba_urgencias", use_container_width=True):
+            st.session_state.alerta_generada = False
+            st.session_state.vista_anterior = st.session_state.vista
+            st.session_state.vista = 'menu'
+            st.rerun()
+    st.markdown("---")
+    # =========================================
+    
     # Título de la Emergencia
     st.markdown("<h2 style='text-align: center; color: #FF4C4C;'>🚨 S.O.S. PELUDITO EN PELIGRO</h2>", unsafe_allow_html=True)
 
@@ -25,12 +41,6 @@ def mostrar_emitir_alerta():
     </ol>
     </div>
     """, unsafe_allow_html=True)
-
-    # Botón de escape rápido al Inicio
-    if st.button("⬅️ Volver al Inicio", use_container_width=True):
-        st.session_state.alerta_generada = False
-        st.session_state.vista = 'inicio'
-        st.rerun()
 
     # Si la alerta ya se generó, mostramos el botón de WhatsApp
     if st.session_state.get("alerta_generada", False):
@@ -106,3 +116,19 @@ def mostrar_emitir_alerta():
                 st.session_state.link_wa = f"https://api.whatsapp.com/send?phone={telefono_guardia}&text={urllib.parse.quote(mensaje)}"
                 st.session_state.alerta_generada = True
                 st.rerun()
+
+    # === BOTONERA DE NAVEGACIÓN (INFERIOR) ===
+    st.markdown("---")
+    col_nav3, col_nav4 = st.columns(2)
+    with col_nav3:
+        if st.button("⬅️ Volver", key="btn_volver_abajo_urgencias", use_container_width=True):
+            st.session_state.alerta_generada = False
+            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
+            st.rerun()
+    with col_nav4:
+        if st.button("☰ Menú Principal", key="btn_menu_abajo_urgencias", use_container_width=True):
+            st.session_state.alerta_generada = False
+            st.session_state.vista_anterior = st.session_state.vista
+            st.session_state.vista = 'menu'
+            st.rerun()
+    # =========================================

@@ -1,8 +1,34 @@
 import streamlit as st
 import os
+import json
 from datetime import datetime
 
+ARCHIVO_CONSULTAS = "consultas.json"
+
+def cargar_consultas():
+    if os.path.exists(ARCHIVO_CONSULTAS):
+        with open(ARCHIVO_CONSULTAS, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
 def mostrar_consultas():
+    # --- LA BANDERITA DE DESTINO PARA EL ASCENSOR ---
+    st.markdown("<div id='tope-pagina'></div>", unsafe_allow_html=True)
+    
+    # === BOTONERA DE NAVEGACIÓN (SUPERIOR) ===
+    col_nav1, col_nav2 = st.columns(2)
+    with col_nav1:
+        if st.button("⬅️ Volver", key="btn_volver_arriba_consultas", use_container_width=True):
+            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
+            st.rerun()
+    with col_nav2:
+        if st.button("☰ Menú Principal", key="btn_menu_arriba_consultas", use_container_width=True):
+            st.session_state.vista_anterior = st.session_state.vista
+            st.session_state.vista = 'menu'
+            st.rerun()
+    st.markdown("---")
+    # =========================================
+
     # Título principal
     st.markdown("<h2 style='text-align: center;'>🩺 Consultorio Médico</h2>", unsafe_allow_html=True)
     
@@ -24,6 +50,10 @@ def mostrar_consultas():
 
     # Creamos las dos pestañas
     tab_roco, tab_aquita = st.tabs(["🐶 El rincón de Roco", "🐱 Los consejos de Aquí-ta"])
+    
+    consultas = cargar_consultas()
+    consultas_perros = [c for c in consultas if c.get("categoria", "Perros") == "Perros"]
+    consultas_gatos = [c for c in consultas if c.get("categoria") == "Gatos"]
 
     # ==========================================
     # PESTAÑA DE ROCO
@@ -32,40 +62,30 @@ def mostrar_consultas():
         st.markdown("<h3 style='color: #8B4513;'>🐶 Roco te orienta</h3>", unsafe_allow_html=True)
         st.write("¡Guau! Llevo más de 15 años siendo el rey absoluto de mi casa, rodeado de mimos, siestas cómodas y excelente atención. Nunca me faltó nada, así que conozco de primera mano la importancia de una buena cucha, una dieta sana y el calor de una familia. Preguntame lo que necesites sobre nuestros cuidados.")
         
-        preguntas_roco = [
-            "Elegí una pregunta...",
-            "¿Qué hago si encuentro un perro asustado en la calle?",
-            "¿Les hace mal a los perros comer las sobras del asado?"
-        ]
+        st.markdown("**Tus dudas perrunas:**")
         
-        eleccion_roco = st.selectbox("Tus dudas perrunas:", preguntas_roco, key="select_roco")
-        
-        if eleccion_roco == "¿Qué hago si encuentro un perro asustado en la calle?":
-            st.success("Primero, asegurate de no asustarlo más. Tratá de retenerlo en un lugar seguro sin arriesgarte, sacale una foto y subí urgente la alerta en la sección 'S.O.S Alertas' para que la manada vecinal empiece a buscar a su familia.")
-        
-        elif eleccion_roco == "¿Les hace mal a los perros comer las sobras del asado?":
-            st.warning("¡Mucho cuidado! Los huesos cocidos se astillan súper fácil y nos pueden lastimar gravemente el estómago o los intestinos. Además, la grasa provoca problemas digestivos severos. Si nos querés malcriar, mejor un pedacito de carne magra bien cocida y sin nada de hueso.")
+        if not consultas_perros:
+            st.info("Todavía no subimos respuestas de Roco. ¡Volvé pronto!")
+        else:
+            for c in consultas_perros:
+                with st.expander(f"🐾 {c['pregunta']}"):
+                    st.write(c['respuesta'])
 
     # ==========================================
     # PESTAÑA DE AQUÍ-TA
     # ==========================================
     with tab_aquita:
         st.markdown("<h3 style='color: #5D4037;'>🐱 Aquí-ta te aconseja</h3>", unsafe_allow_html=True)
-        st.write("¡Miau! Desde mi rincón observo todo y la tengo clarísima. Dejame ayudarte con el misterioso mundo felino.")
+        st.write("¡Miau! Los felinos somos un mundo aparte. Elegantes, independientes pero muy mimosos cuando queremos. Acá te dejo los mejores consejos para que nos entiendas mejor.")
         
-        preguntas_aquita = [
-            "Elegí una pregunta...",
-            "¿Le hace mal a mi gato comer alimento de perro?",
-            "¿Por qué mi gato araña los sillones de casa?"
-        ]
+        st.markdown("**Tus dudas felinas:**")
         
-        eleccion_aquita = st.selectbox("Tus dudas felinas:", preguntas_aquita, key="select_aquita")
-        
-        if eleccion_aquita == "¿Le hace mal a mi gato comer alimento de perro?":
-            st.error("¡Sí, es súper peligroso a largo plazo! Los gatos somos carnívoros estrictos y necesitamos taurina para mantener sano el corazón y la vista. El alimento de perro no trae la cantidad que necesitamos.")
-            
-        elif eleccion_aquita == "¿Por qué mi gato araña los sillones de casa?":
-            st.info("No lo hacemos por maldad. Necesitamos afilar nuestras uñas, estirar bien la columna y dejar marcas olfativas. Conseguinos un buen rascador, ponelo bien cerquita del sillón, y vas a ver cómo dejamos tus muebles en paz.")
+        if not consultas_gatos:
+            st.info("Todavía no subimos respuestas de Aquí-ta. ¡Volvé pronto!")
+        else:
+            for c in consultas_gatos:
+                with st.expander(f"🐾 {c['pregunta']}"):
+                    st.write(c['respuesta'])
 
     # ==========================================
     # BUZÓN DE NUEVAS CONSULTAS (CAPTURA DE PREGUNTAS)
@@ -87,3 +107,17 @@ def mostrar_consultas():
                     fecha_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     f.write(f"[{fecha_hora}] {nueva_pregunta}\n")
                 st.success("¡Tu consulta fue enviada con éxito! Próximamente la sumaremos al consultorio.")
+
+    # === BOTONERA DE NAVEGACIÓN (INFERIOR) ===
+    st.markdown("---")
+    col_nav3, col_nav4 = st.columns(2)
+    with col_nav3:
+        if st.button("⬅️ Volver", key="btn_volver_abajo_consultas", use_container_width=True):
+            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
+            st.rerun()
+    with col_nav4:
+        if st.button("☰ Menú Principal", key="btn_menu_abajo_consultas", use_container_width=True):
+            st.session_state.vista_anterior = st.session_state.vista
+            st.session_state.vista = 'menu'
+            st.rerun()
+    # =========================================

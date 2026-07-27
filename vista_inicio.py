@@ -4,7 +4,7 @@ import json
 import random
 import csv
 import base64
-import datetime # Agregado para usar el reloj en la rotación de razas
+import datetime 
 
 # Función auxiliar para convertir imágenes a Base64 para el carrusel
 def obtener_imagen_base64(ruta_imagen):
@@ -19,16 +19,22 @@ def mostrar_inicio():
     st.markdown("<div id='tope-pagina'></div>", unsafe_allow_html=True)
     
     # ==========================================
-    # 1. CABECERA
+    # 1. VIDEO INSTITUCIONAL (Coronando la página)
     # ==========================================
-    st.markdown("<h1 class='titulo-burbuja' style='text-align: center;'>PELUDITOS</h1>", unsafe_allow_html=True)
+    if os.path.exists("PELUDITOS.mp4"):
+        st.video("PELUDITOS.mp4", autoplay=False)
+    
+    # ==========================================
+    # 2. CABECERA
+    # ==========================================
+    st.markdown("<h1 class='titulo-burbuja' style='text-align: center; margin-top: 10px;'>PELUDITOS</h1>", unsafe_allow_html=True)
         
     # Subtítulo centrado
     st.markdown("<p style='font-weight: bold; margin-top: 5px; font-size: 16px; text-align: center;'>1ra y única red de mascoteros de Ing. Jacobacci</p>", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ==========================================
-    # 2. CITAS INSPIRACIONALES ROTATIVAS (ARRIBA DE TODO)
+    # 3. CITAS INSPIRACIONALES ROTATIVAS
     # ==========================================
     citas_dinamicas = []
     if os.path.exists("citas.json"):
@@ -40,66 +46,35 @@ def mostrar_inicio():
     
     if citas_dinamicas:
         cita_elegida = random.choice(citas_dinamicas)
+        cita_limpia = cita_elegida.replace("**", "") # Limpiamos los asteriscos
+        
         st.markdown(f"""
         <div style='background-color: #fdf4e3; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #e8dcc4; margin-bottom: 20px;'>
-        <b style='color: #5D4037;'>{cita_elegida}</b><br><span style='font-size: 11px; color: gray; margin-top: 5px; display: block;'>(Nueva cita en cada visita)</span>
+        <b style='color: #5D4037;'>{cita_limpia}</b><br><span style='font-size: 11px; color: gray; margin-top: 5px; display: block;'>(Nueva cita en cada visita)</span>
         </div>
         """, unsafe_allow_html=True)
 
     # ==========================================
-    # 3. VIDEO INSTITUCIONAL
+    # 4. BOTONES PRINCIPALES DE INTRODUCCIÓN
     # ==========================================
-    if os.path.exists("PELUDITOS.mp4"):
-        st.video("PELUDITOS.mp4", autoplay=False)
-    
+    col_intro1, col_intro2, col_intro3 = st.columns(3)
+    with col_intro1:
+        if st.button("Quiénes Somos", key="btn_quienes_arriba", use_container_width=True):
+            st.session_state.vista = 'quienes_somos'
+            st.rerun()
+    with col_intro2:
+        if st.button("Manual de Uso", key="btn_manual_arriba", use_container_width=True):
+            st.session_state.vista = 'faq'
+            st.rerun()
+    with col_intro3:
+        if st.button("Menú Principal", key="btn_menu_arriba_inicio", use_container_width=True):
+            st.session_state.vista = 'menu'
+            st.rerun()
+            
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ==========================================
-    # 3.5. LA RAZA DEL DÍA (Versión a prueba de fallos)
-    # ==========================================
-    if os.path.exists("razas.json"):
-        try:
-            with open("razas.json", 'r', encoding='utf-8') as f:
-                catalogo_razas = json.load(f)
-                
-            # Solo intentamos mostrar si la lista existe y tiene al menos un animal
-            if isinstance(catalogo_razas, list) and len(catalogo_razas) > 0:
-                dia_del_ano = datetime.datetime.now().timetuple().tm_yday
-                indice_raza = dia_del_ano % len(catalogo_razas)
-                raza_hoy = catalogo_razas[indice_raza]
-                
-                # Validamos que los datos estén sanos (que sea un diccionario)
-                if isinstance(raza_hoy, dict):
-                    with st.container(border=True):
-                        st.markdown("<h4 style='text-align: center; color: #8B4513;'>🐾 Raza del Día</h4>", unsafe_allow_html=True)
-                        
-                        col_foto_raza, col_texto_raza = st.columns([1, 2])
-                        with col_foto_raza:
-                            # Filtro de seguridad por si la foto no existe o quedó en blanco
-                            nombre_archivo = raza_hoy.get("foto_archivo", "")
-                            if not nombre_archivo: 
-                                nombre_archivo = ""
-                            
-                            ruta_foto_raza = os.path.join("fotos_razas", str(nombre_archivo))
-                            
-                            if os.path.exists(ruta_foto_raza) and nombre_archivo != "":
-                                st.image(ruta_foto_raza, use_container_width=True)
-                            else:
-                                st.info("📷 Foto en camino")
-                                
-                        with col_texto_raza:
-                            st.markdown(f"**{raza_hoy.get('nombre', 'Raza en actualización')}**")
-                            st.write(raza_hoy.get("resumen", ""))
-                            if st.button("Leer más sobre esta raza...", key="btn_leer_raza", use_container_width=True):
-                                st.session_state.vista = 'razas' 
-                                st.rerun()
-                    st.markdown("<br>", unsafe_allow_html=True)
-        except Exception:
-            # Si hay un error profundo, simplemente ocultamos la caja y no rompemos la app
-            pass
-
-    # ==========================================
-    # 4. MOTOR DEL CARRUSEL DE FOTOS
+    # 5. MOTOR DEL CARRUSEL DE FOTOS (Mascota destacada)
     # ==========================================
     mascotas_portada = []
     diccionario_nombres = {}
@@ -145,30 +120,56 @@ def mostrar_inicio():
             st.markdown(html_foto, unsafe_allow_html=True)
             velita = " 🕯️" if "arco" in mascota["estado"].lower() else ""
             
-            # --- DISEÑO EXACTO A manada.png ---
-            # 1. Nombre de la mascota destacado (ROQUITO)
             st.markdown(f"<h2 style='text-align: center; color: #8B4513; margin-top: 10px; margin-bottom: 5px;'>{mascota['nombre'].upper()}{velita}</h2>", unsafe_allow_html=True)
-            
-            # 2. Primera frase
             st.markdown(f"<p style='text-align: center; color: #5D4037; font-size: 18px; margin-top: 0px; margin-bottom: 5px;'>Miembro de la manada</p>", unsafe_allow_html=True)
-            
-            # 3. Segunda frase destacada
             st.markdown(f"<p style='text-align: center; color: #5D4037; font-size: 16px; font-weight: bold; margin-top: 0px;'>DE INGENIERO JACOBACCI</p>", unsafe_allow_html=True)
 
-    # ==========================================
-    # 5. BOTONERA SUPERIOR
-    # ==========================================
     st.markdown("<br>", unsafe_allow_html=True)
-    col_nav1, col_nav2 = st.columns(2)
-    with col_nav1:
-        if st.button("Quiénes Somos", use_container_width=True):
-            st.session_state.vista = 'quienes_somos'
-            st.rerun()
-    with col_nav2:
-        if st.button("Manual del Usuario", use_container_width=True):
-            st.session_state.vista = 'faq'
-            st.rerun()
 
+    # ==========================================
+    # 6. LA RAZA DEL DÍA 
+    # ==========================================
+    if os.path.exists("razas.json"):
+        try:
+            with open("razas.json", 'r', encoding='utf-8') as f:
+                catalogo_razas = json.load(f)
+                
+            if isinstance(catalogo_razas, list) and len(catalogo_razas) > 0:
+                dia_del_ano = datetime.datetime.now().timetuple().tm_yday
+                indice_raza = dia_del_ano % len(catalogo_razas)
+                raza_hoy = catalogo_razas[indice_raza]
+                
+                if isinstance(raza_hoy, dict):
+                    with st.container(border=True):
+                        st.markdown("<h4 style='text-align: center; color: #8B4513;'>🐾 Raza del Día</h4>", unsafe_allow_html=True)
+                        
+                        col_foto_raza, col_texto_raza = st.columns([1, 2])
+                        with col_foto_raza:
+                            nombre_archivo = raza_hoy.get("foto_archivo", "")
+                            if not nombre_archivo: 
+                                nombre_archivo = ""
+                            ruta_foto_raza = os.path.join("fotos_razas", str(nombre_archivo))
+                            
+                            if os.path.exists(ruta_foto_raza) and nombre_archivo != "":
+                                st.image(ruta_foto_raza, use_container_width=True)
+                            else:
+                                st.info("📷 Foto en camino")
+                                
+                        with col_texto_raza:
+                            st.markdown(f"**{raza_hoy.get('nombre', 'Raza en actualización')}**")
+                            st.write(raza_hoy.get("resumen", ""))
+                            if st.button("Leer más sobre esta raza...", key="btn_leer_raza", use_container_width=True):
+                                st.session_state.vista = 'razas' 
+                                st.rerun()
+                    st.markdown("<br>", unsafe_allow_html=True)
+        except Exception:
+            pass
+
+    st.markdown("---")
+
+    # ==========================================
+    # 7. BOTONERA DE ACCIÓN Y REGISTRO 
+    # ==========================================
     col_reg1, col_reg2, col_reg3 = st.columns(3)
     with col_reg1:
         if st.button("Registro", use_container_width=True):
@@ -186,7 +187,7 @@ def mostrar_inicio():
     st.markdown("---")
 
     # ==========================================
-    # 6. DE INTERÉS GRAL Y COMUNICADOS
+    # 8. DE INTERÉS GRAL Y COMUNICADOS
     # ==========================================
     st.markdown("<h4 style='text-align: center; color: #8B4513;'>De interés Gral.</h4>", unsafe_allow_html=True)
 
@@ -217,21 +218,35 @@ def mostrar_inicio():
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ==========================================
-    # 7. BOTONERA INFERIOR (SALUD Y SOS)
+    # 8.5. CONSULTORIO MÉDICO (Dres. Roco y Aquí-tá)
     # ==========================================
-    col_srv1, col_srv2, col_srv3 = st.columns(3)
-    with col_srv1:
-        if st.button("🩺 Salud y Bienestar", use_container_width=True):
-            st.session_state.vista = 'bienestar'
+    with st.container(border=True):
+        st.markdown("<h4 style='text-align: center; color: #8B4513;'>🩺 Consultorio Médico</h4>", unsafe_allow_html=True)
+        if os.path.exists("doctores.png"):
+            st.image("doctores.png", use_container_width=True)
+        elif os.path.exists("doctores-2.png"):
+            st.image("doctores-2.png", use_container_width=True)
+        st.markdown("<p style='text-align: center; font-size: 16px; color: #5D4037;'>Dres. Roco y Aquí-tá a tu disposición para cuidar la salud de la manada.</p>", unsafe_allow_html=True)
+        if st.button("Entrar al Consultorio Médico", key="btn_consultorio_portada", use_container_width=True):
+            st.session_state.vista = 'consultas'
             st.rerun()
-    with col_srv2:
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # ==========================================
+    # 9. BOTONERA INFERIOR (CUMPLES, ARCO IRIS Y SOS)
+    # ==========================================
+    col_srv1, col_srv2 = st.columns(2)
+    with col_srv1:
         if st.button("🎂 Cumples", use_container_width=True):
             st.session_state.vista = 'cumples'
             st.rerun()
-    with col_srv3:
+    with col_srv2:
         if st.button("🌈 Arco Iris", use_container_width=True):
             st.session_state.vista = 'arcoiris'
             st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
 
     col_sos1, col_sos2 = st.columns(2)
     with col_sos1:
@@ -245,13 +260,22 @@ def mostrar_inicio():
             
     st.markdown("<br>", unsafe_allow_html=True)
             
-    # --- ACÁ ESTÁ EL NUEVO BOTÓN OFICIAL DE URESA ---
+    # --- BOTÓN OFICIAL DE URESA ---
     st.link_button("🚨 Reportar Mordedura a U.R.E.S.A. (Formulario Oficial)", "https://docs.google.com/forms/d/e/1FAIpQLScH8t9_aR3JHMVN5HmJTKzr0ut1g7-LdGMVDDvhE9LJbmIfLg/viewform?usp=sharing&ouid=118263163555837582044", use_container_width=True)
 
+    # ==========================================
+    # 9.5. BOTÓN DE MENÚ PRINCIPAL (Sobre el Sponsor)
+    # ==========================================
+    st.markdown("<br>", unsafe_allow_html=True)
+    col_m1, col_m2, col_m3 = st.columns([1, 2, 1])
+    with col_m2:
+        if st.button("☰ Menú Principal", key="btn_menu_sobre_sponsor", use_container_width=True):
+            st.session_state.vista = 'menu'
+            st.rerun()
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ==========================================
-    # 8. SPONSOR PREMIUM Y ACCESO ADMIN
+    # 10. SPONSOR PREMIUM
     # ==========================================
     archivo_comercios = "comercios.json"
     if os.path.exists(archivo_comercios):
@@ -274,9 +298,3 @@ def mostrar_inicio():
             pass
 
     st.markdown("<br><br>", unsafe_allow_html=True)
-
-    col_v1, col_v2, col_v3 = st.columns([1, 2, 1])
-    with col_v2:
-        if st.button("📍 Acceso Institucional", use_container_width=True):
-            st.session_state.vista = 'admin'
-            st.rerun()

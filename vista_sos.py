@@ -34,6 +34,20 @@ def mostrar_sos():
     # --- LA BANDERITA DE DESTINO PARA EL ASCENSOR ---
     st.markdown("<div id='tope-pagina'></div>", unsafe_allow_html=True)
     
+    # === BOTONERA DE NAVEGACIÓN (SUPERIOR) ===
+    col_nav1, col_nav2 = st.columns(2)
+    with col_nav1:
+        if st.button("⬅️ Volver", key="btn_volver_arriba_sos", use_container_width=True):
+            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
+            st.rerun()
+    with col_nav2:
+        if st.button("☰ Menú Principal", key="btn_menu_arriba_sos", use_container_width=True):
+            st.session_state.vista_anterior = st.session_state.vista
+            st.session_state.vista = 'menu'
+            st.rerun()
+    st.markdown("---")
+    # =========================================
+    
     st.markdown("<h2 style='text-align: center; color: #D32F2F;'>🚨 S.O.S. Animalito en Peligro</h2>", unsafe_allow_html=True)
 
     # --- NUEVA INTRODUCCIÓN AMIGABLE Y CLARA (UX) ---
@@ -72,3 +86,17 @@ def mostrar_sos():
         if st.form_submit_button("📢 Publicar Alerta S.O.S.", type="primary"):
             if not lat_click or not detalles or not nombre_den or not celular_den:
                 st.error("⚠️ Faltan datos obligatorios (Marcá el lugar en el mapa y completá tus datos).")
+
+    # === BOTONERA DE NAVEGACIÓN (INFERIOR) ===
+    st.markdown("---")
+    col_nav3, col_nav4 = st.columns(2)
+    with col_nav3:
+        if st.button("⬅️ Volver", key="btn_volver_abajo_sos", use_container_width=True):
+            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
+            st.rerun()
+    with col_nav4:
+        if st.button("☰ Menú Principal", key="btn_menu_abajo_sos", use_container_width=True):
+            st.session_state.vista_anterior = st.session_state.vista
+            st.session_state.vista = 'menu'
+            st.rerun()
+    # =========================================

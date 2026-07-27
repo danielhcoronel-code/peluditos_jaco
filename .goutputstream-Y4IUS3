@@ -34,44 +34,24 @@ def mostrar_admin():
     # --- LA BANDERITA DE DESTINO PARA EL ASCENSOR ---
     st.markdown("<div id='tope-pagina'></div>", unsafe_allow_html=True)
     
-    # === BOTONERA DE NAVEGACIÓN (SUPERIOR) ===
-    col_nav1, col_nav2 = st.columns(2)
-    with col_nav1:
-        if st.button("⬅️ Volver", key="btn_volver_arriba_admin", use_container_width=True):
-            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
-            st.rerun()
-    with col_nav2:
-        if st.button("☰ Menú Principal", key="btn_menu_arriba_admin", use_container_width=True):
-            st.session_state.vista_anterior = st.session_state.vista
-            st.session_state.vista = 'menu'
-            st.rerun()
-    st.markdown("---")
-    # =========================================
-    
     st.markdown("<h2 style='text-align: center; color: #5D4037;'>⚙️ Panel de Control</h2>", unsafe_allow_html=True)
     
     if 'admin_logeado' not in st.session_state: st.session_state.admin_logeado = False
 
     if not st.session_state.admin_logeado:
         st.info("🔒 Ingreso exclusivo para la Administración General, Zoonosis y Patitas Felices.")
-        
-        # Envolvemos el input y el botón en un st.form para capturar la tecla ENTER de forma limpia
-        with st.form("form_login_admin"):
-            clave = st.text_input("Ingrese su clave de acceso:", type="password")
-            btn_enviar_clave = st.form_submit_button("Ingresar", use_container_width=True)
-            
-            if btn_enviar_clave:
-                if clave == "daniel2026": 
-                    st.session_state.admin_logeado, st.session_state.rol = True, "dios"
-                    st.rerun()
-                elif clave == "patitas2026": 
-                    st.session_state.admin_logeado, st.session_state.rol = True, "patitas"
-                    st.rerun()
-                elif clave == "zoonosis2026":
-                    st.session_state.admin_logeado, st.session_state.rol = True, "zoonosis"
-                    st.rerun()
-                else: 
-                    st.error("❌ Clave incorrecta. Intente nuevamente.")
+        clave = st.text_input("Ingrese su clave de acceso:", type="password")
+        if st.button("Ingresar", use_container_width=True):
+            if clave == "daniel2026": 
+                st.session_state.admin_logeado, st.session_state.rol = True, "dios"
+                st.rerun()
+            elif clave == "patitas2026": 
+                st.session_state.admin_logeado, st.session_state.rol = True, "patitas"
+                st.rerun()
+            elif clave == "zoonosis2026":
+                st.session_state.admin_logeado, st.session_state.rol = True, "zoonosis"
+                st.rerun()
+            else: st.error("❌ Clave incorrecta. Intente nuevamente.")
     else:
         st.success(f"✅ Sesión iniciada. Nivel de acceso: {st.session_state.rol.upper()}")
         if st.button("Cerrar Sesión"):
@@ -484,6 +464,7 @@ def mostrar_admin():
                     st.markdown("### 🐕 Nueva Ficha Técnica")
                     raza_edit = {} 
 
+                # Valores por defecto basados en si editamos o creamos
                 def_nombre = raza_edit.get("nombre", "")
                 def_resumen = raza_edit.get("resumen", "")
                 def_desc = raza_edit.get("descripcion", "")
@@ -491,6 +472,7 @@ def mostrar_admin():
                 def_pelo = raza_edit.get("pelo", "Corto")
                 def_origen = raza_edit.get("origen", "")
                 
+                # Rescate a prueba de balas: si había texto viejo, lo convertimos a un 3 por defecto
                 try: def_ninos = int(raza_edit.get("ninos", 4))
                 except: def_ninos = 4
                 try: def_salud = int(raza_edit.get("salud", 5))
@@ -527,6 +509,7 @@ def mostrar_admin():
                         r_energia = st.slider("Nivel de Energía / Espacio:", 1, 5, def_energia)
                         r_inteligencia = st.slider("Inteligencia / Apego:", 1, 5, def_inte)
                     
+                    st.write("*(Nota: Para cambiar la foto, subí una nueva. Si no subís nada, se mantiene la que ya tenías).*")
                     r_foto = st.file_uploader("Foto de la raza (Ideal apaisada):", type=['jpg', 'jpeg', 'png'])
                     
                     btn_txt = "💾 Guardar Cambios" if modo_edicion else "💾 Guardar Nueva Raza"
@@ -541,7 +524,7 @@ def mostrar_admin():
                             ruta_foto_raza = os.path.join(DIRECTORIO_FOTOS_RAZAS, nombre_foto)
                             with open(ruta_foto_raza, "wb") as f:
                                 f.write(r_foto.getbuffer())
-                    
+                        
                         nueva_data = {
                             "nombre": r_nombre,
                             "resumen": r_resumen,
@@ -570,13 +553,14 @@ def mostrar_admin():
                         st.error("⚠️ El nombre de la raza es obligatorio.")
 
         # ==========================================
-        # 9. CONSULTORIO MÉDICO (PREGUNTAS Y RESPUESTAS)
+        # 9. CONSULTORIO MÉDICO (PREGUNTAS Y RESPUESTAS) - NUEVO
         # ==========================================
         if "💬 Consultas" in dic_pestanas:
             with dic_pestanas["💬 Consultas"]:
                 st.info("ℹ️ **¿Para qué sirve esto?** Acá podés cargar las preguntas frecuentes y derivarlas al rincón de Roco o de Aquí-ta.")
                 st.markdown("### 🩺 Cargar Nueva Consulta")
                 
+                # NUEVO: Selector para derivar la pregunta
                 destinatario = st.selectbox("¿A qué consultorio va dirigida la pregunta?", ["🐶 Perros (Roco)", "🐱 Gatos (Aquí-ta)"])
                 categoria = "Perros" if "Roco" in destinatario else "Gatos"
                 
@@ -605,6 +589,7 @@ def mostrar_admin():
                     st.write("Todavía no hay consultas cargadas en el sistema.")
                 else:
                     for i, c in enumerate(consultas):
+                        # Manejamos consultas viejas que quizás no tenían categoría
                         cat_emoji = "🐶" if c.get("categoria", "Perros") == "Perros" else "🐱"
                         with st.expander(f"{cat_emoji} Pregunta {i+1}: {c['pregunta']}"):
                             st.write(f"**Derivado a:** {c.get('categoria', 'Perros')}")
@@ -613,17 +598,3 @@ def mostrar_admin():
                                 consultas.pop(i)
                                 guardar_datos(ARCHIVO_CONSULTAS, consultas)
                                 st.rerun()
-
-    # === BOTONERA DE NAVEGACIÓN (INFERIOR) ===
-    st.markdown("---")
-    col_nav3, col_nav4 = st.columns(2)
-    with col_nav3:
-        if st.button("⬅️ Volver", key="btn_volver_abajo_admin", use_container_width=True):
-            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
-            st.rerun()
-    with col_nav4:
-        if st.button("☰ Menú Principal", key="btn_menu_abajo_admin", use_container_width=True):
-            st.session_state.vista_anterior = st.session_state.vista
-            st.session_state.vista = 'menu'
-            st.rerun()
-    # =========================================

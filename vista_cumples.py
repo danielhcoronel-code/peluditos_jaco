@@ -90,6 +90,20 @@ def mostrar_cumples():
     # --- LA BANDERITA DE DESTINO PARA EL ASCENSOR ---
     st.markdown("<div id='tope-pagina'></div>", unsafe_allow_html=True)
     
+    # === BOTONERA DE NAVEGACIÓN (SUPERIOR) ===
+    col_nav1, col_nav2 = st.columns(2)
+    with col_nav1:
+        if st.button("⬅️ Volver", key="btn_volver_arriba_cumples", use_container_width=True):
+            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
+            st.rerun()
+    with col_nav2:
+        if st.button("☰ Menú Principal", key="btn_menu_arriba_cumples", use_container_width=True):
+            st.session_state.vista_anterior = st.session_state.vista
+            st.session_state.vista = 'menu'
+            st.rerun()
+    st.markdown("---")
+    # =========================================
+    
     st.markdown("<h2 style='text-align: center; color: #4CAF50;'>🎂 Cumpleañeros del Mes</h2>", unsafe_allow_html=True)
     st.write("¡Dejale un saludo a los animalitos que festejan su vida este mes!")
     
@@ -108,74 +122,87 @@ def mostrar_cumples():
     
     if not cumpleanieros:
         st.info("No hay cumpleaños registrados para este mes. ¡Asegurate de completar la fecha en la ficha de tu mascota!")
-        return
-
-    for m in cumpleanieros:
-        id_m = m['ID_Mascota']
-        with st.container(border=True):
-            col_i, col_d = st.columns([1, 3])
-            with col_i:
-                ruta = os.path.join(CARPETA_FOTOS, f"{id_m}.jpg")
-                if os.path.exists(ruta): st.image(ruta)
-            with col_d:
-                st.subheader(f"🎉 {m['Nombre_Mascota']}")
-                st.write(f"**Raza:** {m['Raza']} | **Especie:** {m['Especie']}")
-                
-                # --- MENSAJES DE LA COMUNIDAD ---
-                saludos_previos = obtener_saludos(id_m)
-                if saludos_previos:
-                    st.markdown("**Mensajes de la comunidad:**")
-                    for s in saludos_previos:
-                        st.caption(f"{s['Emoji']} *\"{s['Mensaje']}\"* - **{s['Autor']}** ({s['Fecha']})")
-                
-                # --- BOTONERA DE ACCIONES ---
-                with st.expander(f"🎁 Dejarle un saludo"):
-                    with st.form(f"form_cumple_{id_m}"):
-                        autor = st.text_input("Tu nombre:", key=f"autor_c_{id_m}")
-                        mensaje = st.text_area("Tu saludo:", max_chars=200, key=f"msg_c_{id_m}")
-                        emoji = st.radio("Regalito virtual:", ["🎂", "🥳", "🎈", "🎁", "🍖", "🦴"], horizontal=True, key=f"emo_c_{id_m}")
-                        
-                        if st.form_submit_button("Enviar Saludo"):
-                            if not autor or not mensaje: st.warning("Completá tu nombre y el mensaje.")
-                            elif not validar_texto(mensaje) or not validar_texto(autor): st.error("⚠️ Tu mensaje contiene palabras no permitidas.")
-                            else:
-                                guardar_saludo(id_m, autor, mensaje, emoji)
-                                st.success("¡Saludo enviado!")
-                                st.rerun()
-                                
-                # --- EL GRAN BOTÓN DE REGALOS ---
-                with st.expander(f"🎟️ ¿Sos el dueño? ¡Reclamá tu regalo de cumpleaños!"):
-                    if not st.session_state.get(f"cupon_{id_m}"):
-                        st.write("Ingresá el PIN de tu mascota para desbloquear los descuentos de nuestros Padrinos.")
-                        pin_ingresado = st.text_input("PIN de seguridad:", type="password", key=f"pin_regalo_{id_m}")
-                        
-                        if st.button("Verificar PIN", key=f"btn_regalo_{id_m}"):
-                            if pin_ingresado.strip() == str(m.get('PIN', '')):
-                                st.session_state[f"pin_ok_{id_m}"] = True
-                            else:
-                                st.error("PIN incorrecto. Revisá el código que anotaste al registrarla.")
-                        
-                        if st.session_state.get(f"pin_ok_{id_m}"):
-                            st.success("¡PIN verificado! Descuentos habilitados:")
-                            padrinos_ok = obtener_padrinos_disponibles(mes_actual)
+    else:
+        for m in cumpleanieros:
+            id_m = m['ID_Mascota']
+            with st.container(border=True):
+                col_i, col_d = st.columns([1, 3])
+                with col_i:
+                    ruta = os.path.join(CARPETA_FOTOS, f"{id_m}.jpg")
+                    if os.path.exists(ruta): st.image(ruta)
+                with col_d:
+                    st.subheader(f"🎉 {m['Nombre_Mascota']}")
+                    st.write(f"**Raza:** {m['Raza']} | **Especie:** {m['Especie']}")
+                    
+                    # --- MENSAJES DE LA COMUNIDAD ---
+                    saludos_previos = obtener_saludos(id_m)
+                    if saludos_previos:
+                        st.markdown("**Mensajes de la comunidad:**")
+                        for s in saludos_previos:
+                            st.caption(f"{s['Emoji']} *\"{s['Mensaje']}\"* - **{s['Autor']}** ({s['Fecha']})")
+                    
+                    # --- BOTONERA DE ACCIONES ---
+                    with st.expander(f"🎁 Dejarle un saludo"):
+                        with st.form(f"form_cumple_{id_m}"):
+                            autor = st.text_input("Tu nombre:", key=f"autor_c_{id_m}")
+                            mensaje = st.text_area("Tu saludo:", max_chars=200, key=f"msg_c_{id_m}")
+                            emoji = st.radio("Regalito virtual:", ["🎂", "🥳", "🎈", "🎁", "🍖", "🦴"], horizontal=True, key=f"emo_c_{id_m}")
                             
-                            if not padrinos_ok:
-                                st.info("¡Guau! Este mes ya se agotaron todos los cupones. ¡Atento al mes que viene!")
-                            else:
-                                st.write("Elegí tu descuento. **(Solo podés elegir uno)**:")
-                                for pad in padrinos_ok:
-                                    col_p1, col_p2 = st.columns([3, 1])
-                                    with col_p1:
-                                        st.write(f"🛍️ **{pad['Comercio']}** ({pad['Descuento']} OFF)")
-                                        cupones_restantes = 5 - int(pad['Cupones_Usados'])
-                                        st.caption(f"Quedan {cupones_restantes} disponibles este mes.")
-                                    with col_p2:
-                                        if st.button("Elegir", key=f"recl_{id_m}_{pad['Comercio']}"):
-                                            reclamar_cupon(pad['Comercio'], mes_actual)
-                                            st.session_state[f"cupon_{id_m}"] = pad['Comercio']
-                                            st.rerun()
-                    else:
-                        comercio_elegido = st.session_state[f"cupon_{id_m}"]
-                        st.success(f"🎉 ¡Excelente! Tenés tu descuento en **{comercio_elegido}**.")
-                        st.markdown(f"> **CÓDIGO DE CUPÓN: CUMPLE-{id_m.replace('ID-', '')}**")
-                        st.info("Sacale captura a esta pantalla y presentala en el local junto con tu DNI para que te hagan el descuento.")
+                            if st.form_submit_button("Enviar Saludo"):
+                                if not autor or not mensaje: st.warning("Completá tu nombre y el mensaje.")
+                                elif not validar_texto(mensaje) or not validar_texto(autor): st.error("⚠️ Tu mensaje contiene palabras no permitidas.")
+                                else:
+                                    guardar_saludo(id_m, autor, mensaje, emoji)
+                                    st.success("¡Saludo enviado!")
+                                    st.rerun()
+                                    
+                    # --- EL GRAN BOTÓN DE REGALOS ---
+                    with st.expander(f"🎟️ ¿Sos el dueño? ¡Reclamá tu regalo de cumpleaños!"):
+                        if not st.session_state.get(f"cupon_{id_m}"):
+                            st.write("Ingresá el PIN de tu mascota para desbloquear los descuentos de nuestros Padrinos.")
+                            pin_ingresado = st.text_input("PIN de seguridad:", type="password", key=f"pin_regalo_{id_m}")
+                            
+                            if st.button("Verificar PIN", key=f"btn_regalo_{id_m}"):
+                                if pin_ingresado.strip() == str(m.get('PIN', '')):
+                                    st.session_state[f"pin_ok_{id_m}"] = True
+                                else:
+                                    st.error("PIN incorrecto. Revisá el código que anotaste al registrarla.")
+                            
+                            if st.session_state.get(f"pin_ok_{id_m}"):
+                                st.success("¡PIN verificado! Descuentos habilitados:")
+                                padrinos_ok = obtener_padrinos_disponibles(mes_actual)
+                                
+                                if not padrinos_ok:
+                                    st.info("¡Guau! Este mes ya se agotaron todos los cupones. ¡Atento al mes que viene!")
+                                else:
+                                    st.write("Elegí tu descuento. **(Solo podés elegir uno)**:")
+                                    for pad in padrinos_ok:
+                                        col_p1, col_p2 = st.columns([3, 1])
+                                        with col_p1:
+                                            st.write(f"🛍️ **{pad['Comercio']}** ({pad['Descuento']} OFF)")
+                                            cupones_restantes = 5 - int(pad['Cupones_Usados'])
+                                            st.caption(f"Quedan {cupones_restantes} disponibles este mes.")
+                                        with col_p2:
+                                            if st.button("Elegir", key=f"recl_{id_m}_{pad['Comercio']}"):
+                                                reclamar_cupon(pad['Comercio'], mes_actual)
+                                                st.session_state[f"cupon_{id_m}"] = pad['Comercio']
+                                                st.rerun()
+                        else:
+                            comercio_elegido = st.session_state[f"cupon_{id_m}"]
+                            st.success(f"🎉 ¡Excelente! Tenés tu descuento en **{comercio_elegido}**.")
+                            st.markdown(f"> **CÓDIGO DE CUPÓN: CUMPLE-{id_m.replace('ID-', '')}**")
+                            st.info("Sacale captura a esta pantalla y presentala en el local junto con tu DNI para que te hagan el descuento.")
+
+    # === BOTONERA DE NAVEGACIÓN (INFERIOR) ===
+    st.markdown("---")
+    col_nav3, col_nav4 = st.columns(2)
+    with col_nav3:
+        if st.button("⬅️ Volver", key="btn_volver_abajo_cumples", use_container_width=True):
+            st.session_state.vista = st.session_state.get('vista_anterior', 'menu')
+            st.rerun()
+    with col_nav4:
+        if st.button("☰ Menú Principal", key="btn_menu_abajo_cumples", use_container_width=True):
+            st.session_state.vista_anterior = st.session_state.vista
+            st.session_state.vista = 'menu'
+            st.rerun()
+    # =========================================
