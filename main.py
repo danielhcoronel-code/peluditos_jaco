@@ -78,6 +78,44 @@ def aplicar_estilos_globales():
 aplicar_estilos_globales()
 
 # ==========================================
+# 1.5 PANTALLA DE PRE-INICIO (BIENVENIDA Y ACCESOS)
+# ==========================================
+if 'pre_inicio_visto' not in st.session_state:
+    st.session_state.pre_inicio_visto = False
+
+if not st.session_state.pre_inicio_visto:
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    col_dummy1, col_centro, col_dummy2 = st.columns([1, 5, 1])
+    with col_centro:
+        with st.container(border=True):
+            st.markdown("<h1 style='text-align: center; color: #2E7D32;'>🐾 Peluditos en Red</h1>", unsafe_allow_html=True)
+            st.markdown("<h3 style='text-align: center; color: #5D4037;'>Ingeniero Jacobacci para toda la Región</h3>", unsafe_allow_html=True)
+            st.markdown("""
+            <p style='text-align: center; font-size: 18px; color: #5D4037; line-height: 1.6; margin-top: 20px;'>
+                La primera aplicación de <b>Ingeniero Jacobacci</b> para toda la región, pensada y construida para el registro, cuidado y protección de nuestras mascotas.
+            </p>
+            <p style='text-align: center; font-size: 16px; color: #888; margin-bottom: 25px;'>
+                ¿Es tu primera vez acá? Conocé nuestra historia o ingresá directamente al sistema.
+            </p>
+            """, unsafe_allow_html=True)
+            
+            # Botones lado a lado
+            col_btn1, col_btn2 = st.columns(2)
+            
+            with col_btn1:
+                if st.button("🚀 Continuar a Inicio", type="primary", use_container_width=True):
+                    st.session_state.pre_inicio_visto = True
+                    st.session_state.vista = 'inicio'
+                    st.rerun()
+                    
+            with col_btn2:
+                if st.button("👥 Quiénes Somos", use_container_width=True):
+                    st.session_state.pre_inicio_visto = True
+                    st.session_state.vista = 'quienes_somos'
+                    st.rerun()
+    st.stop()
+
+# ==========================================
 # 2. FUNCIÓN DE SONIDO DE BIENVENIDA
 # ==========================================
 def jugar_sonido_bienvenida():
@@ -93,16 +131,46 @@ def jugar_sonido_bienvenida():
                 data = f.read()
                 b64 = base64.b64encode(data).decode()
                 
-            reproductor_oculto = f"""
-                <audio autoplay>
-                    <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
-                </audio>
-            """
-            st.markdown(reproductor_oculto, unsafe_allow_html=True)
-            st.session_state.sonido_jugado = True
+                reproductor_oculto = f"""
+                    <audio autoplay>
+                        <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+                    </audio>
+                """
+                st.markdown(reproductor_oculto, unsafe_allow_html=True)
+                st.session_state.sonido_jugado = True
 
 # ==========================================
-# 3. IMPORTACIÓN DE VISTAS
+# 2.5 FUNCIÓN FLOTANTE: CÓMO INSTALAR LA APP
+# ==========================================
+@st.dialog("📲 Instalar Peluditos en tu Celular")
+def mostrar_guia_instalacion():
+    st.markdown("<p style='text-align: center; font-size: 16px; color: #5D4037;'>¡Tené la app siempre a mano para cualquier urgencia! Seguí estos 3 pasos según tu celular:</p>", unsafe_allow_html=True)
+    
+    tab_android, tab_apple = st.tabs(["🤖 Si tenés Android", "🍎 Si tenés iPhone"])
+    
+    with tab_android:
+        st.markdown("""
+        <ol style='color: #5D4037; font-size: 16px; line-height: 1.8;'>
+            <li>Abrí esta página en <b>Google Chrome</b>.</li>
+            <li>Tocá los <b>tres puntitos (⋮)</b> arriba a la derecha.</li>
+            <li>Elegí la opción <b>"Agregar a la pantalla principal"</b> o <b>"Instalar aplicación"</b>.</li>
+            <li>¡Listo! Vas a ver la huellita de Peluditos junto a tus otras apps.</li>
+        </ol>
+        """, unsafe_allow_html=True)
+        st.info("💡 Tip: Hacelo ahora y probalo, ¡es rapidísimo!")
+
+    with tab_apple:
+        st.markdown("""
+        <ol style='color: #5D4037; font-size: 16px; line-height: 1.8;'>
+            <li>Abrí esta página en <b>Safari</b>.</li>
+            <li>Tocá el ícono de <b>Compartir</b> (el cuadradito con la flecha hacia arriba 📤) en la barra de abajo.</li>
+            <li>Bajá un poco y elegí <b>"Agregar a Inicio"</b> (Add to Home Screen).</li>
+            <li>¡Listo! La huellita ya está en tu teléfono.</li>
+        </ol>
+        """, unsafe_allow_html=True)
+
+# ==========================================
+# 3. IMPORTACIÓN DE VISTAS (CIRUGÍA: ADMIN EXTIRPADO)
 # ==========================================
 from vista_tutor import mostrar_tutor
 from vista_inicio import mostrar_inicio
@@ -113,7 +181,6 @@ from vista_modificar import mostrar_modificar
 from vista_bienestar import mostrar_bienestar
 from vista_sos import mostrar_sos
 from vista_cartelera import mostrar_cartelera
-from vista_admin import mostrar_admin
 from vista_manual import mostrar_manual 
 from vista_quienes_somos import mostrar_quienes_somos
 from vista_cumples import mostrar_cumples
@@ -156,28 +223,32 @@ def mostrar_menu_principal():
     
     # --- GRUPO 1: GENERALES ---
     st.markdown("<h4 style='color: #8B4513; margin-bottom: 10px;'>📌 Accesos Generales</h4>", unsafe_allow_html=True)
-    if st.button("🏠 Portada de Inicio", use_container_width=True): navegar_a('inicio')
+    if st.button("🏠 Portada de Inicio", width="stretch"): navegar_a('inicio')
+    
+    if st.button("📲 Instalar App en el Celular", width="stretch"): 
+        mostrar_guia_instalacion()
+        
     colG1, colG2 = st.columns(2)
     with colG1:
-        if st.button("👥 Quiénes Somos", use_container_width=True): navegar_a('quienes_somos')
+        if st.button("👥 Quiénes Somos", width="stretch"): navegar_a('quienes_somos')
     with colG2:
-        if st.button("📖 Manual de Uso", use_container_width=True): navegar_a('faq')
+        if st.button("📖 Manual de Uso", width="stretch"): navegar_a('faq')
 
     # --- GRUPO 2: GESTIÓN DE FICHAS ---
     st.markdown("<br><h4 style='color: #8B4513; margin-bottom: 10px;'>📝 Fichas y Registros</h4>", unsafe_allow_html=True)
     colM1, colM2 = st.columns(2)
     with colM1:
-        if st.button("🐾 Registro", use_container_width=True): navegar_a('formulario')
+        if st.button("🐾 Registro", width="stretch"): navegar_a('formulario')
     with colM2:
-        if st.button("✏️ Editar Registro", use_container_width=True): navegar_a('modificar')
+        if st.button("✏️ Editar Registro", width="stretch"): navegar_a('modificar')
         
-    if st.button("🐕 Catálogo de Razas", use_container_width=True): navegar_a('razas')
+    if st.button("🐕 Catálogo de Razas", width="stretch"): navegar_a('razas')
 
     # --- GRUPO 3: COMUNICADOS ---
     st.markdown("<br><h4 style='color: #8B4513; margin-bottom: 10px;'>📢 Comunicados</h4>", unsafe_allow_html=True)
-    if st.button("🗓️ Información del día", use_container_width=True): navegar_a('avisos')
+    if st.button("🗓️ Información del día", width="stretch"): navegar_a('avisos')
 
-    # --- GRUPO 3.5: CONSULTORIO MÉDICO (Con foto de los doctores) ---
+    # --- GRUPO 3.5: CONSULTORIO MÉDICO ---
     st.markdown("<br>", unsafe_allow_html=True)
     with st.container(border=True):
         st.markdown("<h4 style='text-align: center; color: #8B4513;'>🩺 Consultorio Médico</h4>", unsafe_allow_html=True)
@@ -186,28 +257,26 @@ def mostrar_menu_principal():
         elif os.path.exists("doctores-2.png"):
             st.image("doctores-2.png", use_container_width=True)
         st.markdown("<p style='text-align: center; font-size: 16px; color: #5D4037;'>Dres. Roco y Aquí-tá a tu disposición para cuidar la salud de la manada.</p>", unsafe_allow_html=True)
-        if st.button("Entrar al Consultorio Médico", key="btn_consultorio_menu", use_container_width=True):
+        if st.button("Entrar al Consultorio Médico", key="btn_consultorio_menu", width="stretch"):
             navegar_a('consultas')
 
     # --- GRUPO 4: COMUNIDAD ---
     st.markdown("<br><h4 style='color: #8B4513; margin-bottom: 10px;'>🏘️ Comunidad</h4>", unsafe_allow_html=True)
     colC1, colC2 = st.columns(2)
     with colC1:
-        if st.button("🎂 Cumples", use_container_width=True): navegar_a('cumples')
-        if st.button("🏡 Ser Hogar (H.D.T.)", use_container_width=True): navegar_a('hdt')
+        if st.button("🎂 Cumples", width="stretch"): navegar_a('cumples')
+        if st.button("🏡 Ser Hogar (H.D.T.)", width="stretch"): navegar_a('hdt')
     with colC2:
-        if st.button("🌈 Arco Iris", use_container_width=True): navegar_a('arcoiris')
-        if st.button("🏪 Comercios", use_container_width=True): navegar_a('comercios')
-
-    if st.button("📍 Acceso Admin", use_container_width=True): navegar_a('admin')
+        if st.button("🌈 Arco Iris", width="stretch"): navegar_a('arcoiris')
+        if st.button("🏪 Comercios", width="stretch"): navegar_a('comercios')
 
     # --- GRUPO 5: URGENCIAS Y URESA ---
     st.markdown("<br><h4 style='color: #8B4513; margin-bottom: 10px;'>🚨 Urgencias y Alertas</h4>", unsafe_allow_html=True)
     colU1, colU2 = st.columns(2)
     with colU1:
-        if st.button("S.O.S. Extraviado", use_container_width=True): navegar_a('sos')
+        if st.button("S.O.S. Extraviado", width="stretch"): navegar_a('sos')
     with colU2:
-        if st.button("S.O.S. Peligro", type="primary", use_container_width=True): navegar_a('urgencias')
+        if st.button("S.O.S. Peligro", type="primary", width="stretch"): navegar_a('urgencias')
         
     st.markdown("<br>", unsafe_allow_html=True)
     st.link_button("🚨 Reportar Mordedura a U.R.E.S.A. (Oficial)", "https://docs.google.com/forms/d/e/1FAIpQLScH8t9_aR3JHMVN5HmJTKzr0ut1g7-LdGMVDDvhE9LJbmIfLg/viewform?usp=sharing&ouid=118263163555837582044", use_container_width=True)
@@ -231,11 +300,10 @@ def mostrar_menu_principal():
     """
     st.markdown(boton_wa, unsafe_allow_html=True)
     
-    # LINK DE FACEBOOK REAL
     st.link_button("📘 Visitanos en Facebook (Peluditos en Red)", "https://www.facebook.com/profile.php?id=61592449882525", use_container_width=True)
 
     st.markdown("---")
-    if st.button("⬅️ Volver a donde estaba", use_container_width=True):
+    if st.button("⬅️ Volver a donde estaba", width="stretch"):
         navegar_a(st.session_state.vista_anterior)
 
 # ==========================================
@@ -294,8 +362,6 @@ elif st.session_state.vista == 'sos':
     mostrar_sos()
 elif st.session_state.vista == 'cartelera':
     mostrar_cartelera()
-elif st.session_state.vista == 'admin':
-    mostrar_admin()
 elif st.session_state.vista == 'faq':
     mostrar_manual()
 elif st.session_state.vista == 'quienes_somos':
@@ -321,5 +387,5 @@ elif st.session_state.vista == 'consultas':
 if st.session_state.vista != 'menu':
     st.markdown("---")
     st.info("🐾 **Solidaridad en Jaco:** Con tu aporte voluntario colaborás directamente con Patitas Felices y ayudás a mantener esta plataforma gratuita para los vecinos.")
-    if st.button("💛 Convertirme en Padrino", use_container_width=True, key="btn_solidario"):
+    if st.button("💛 Convertirme en Padrino", width="stretch", key="btn_solidario"):
         st.success("¡Gracias de corazón! Próximamente habilitaremos el link seguro de Mercado Pago.")
